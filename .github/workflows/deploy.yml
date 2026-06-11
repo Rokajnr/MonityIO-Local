@@ -1,0 +1,66 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+
+            echo "=== Starting deployment ==="
+            cd /var/www/monityio
+
+            # 1. Clean local state and fetch latest code to avoid conflicts
+            echo "Fetching latest changes..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            # 2. Build and restart containers in background
+            echo "Rebuilding and restarting Docker containers..."
+            docker compose up -d --build --remove-orphans
+
+            # 3. Post-deployment health verification loop
+            echo "Verifying deployment health..."
+            HEALTHY=false
+            for i in {1..12}; do
+              # Count how many containers are reported as "(healthy)" by Docker Compose
+              HEALTHY_COUNT=$(docker compose ps | grep -o "healthy" | wc -l || true)
+              
+              if [ "$HEALTHY_COUNT" -eq "2" ]; then
+                echo "All containers are healthy!"
+                HEALTHY=true
+                break
+              fi
+              
+              echo "Waiting for containers to boot... status: $HEALTHY_COUNT/2 healthy ($((i*5))s elapsed)"
+              sleep 5
+            done
+
+            if [ "$HEALTHY:false" = "false" ]; then
+              echo "::error::Deployment failed! One or more containers are unhealthy."
+              echo "=== Docker Compose Status ==="
+              docker compose ps
+              echo "=== Recent Container Logs ==="
+              docker compose logs --tail=50
+              exit 1
+            fi
+
+            # 4. Clean up dangling images to free disk space
+            echo "Pruning unused Docker assets..."
+            docker image prune -f
+
+            echo "=== Deployment successfully completed! ==="

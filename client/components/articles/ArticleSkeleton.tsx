@@ -1,7 +1,4 @@
-/**
- * Skeleton Loader Component matching the ArticleCard size and structure.
- * Uses animation classes to create a shimmering skeleton loader.
- */
+
 export function ArticleCardSkeleton() {
   return (
     <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm min-h-[220px] animate-pulse">
