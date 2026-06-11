@@ -1,0 +1,13 @@
+{
+  "name": "monityio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev": "concurrently --kill-others -n \"client,server\" -c \"cyan,magenta\" \"npm run dev:client\" \"npm run dev:server\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
