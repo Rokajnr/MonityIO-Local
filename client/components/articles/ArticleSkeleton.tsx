@@ -8,20 +8,20 @@ export function ArticleCardSkeleton() {
       <div className="space-y-4">
         {/* Date skeleton */}
         <div className="h-3 w-24 bg-zinc-200 dark:bg-zinc-800 rounded" />
-        
+
         {/* Title skeleton */}
         <div className="space-y-2">
           <div className="h-5 w-5/6 bg-zinc-200 dark:bg-zinc-800 rounded" />
           <div className="h-5 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded" />
         </div>
-        
+
         {/* Description skeleton */}
         <div className="space-y-2 pt-2">
           <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800/60 rounded" />
           <div className="h-3 w-11/12 bg-zinc-100 dark:bg-zinc-800/60 rounded" />
         </div>
       </div>
-      
+
       {/* Link skeleton */}
       <div className="h-4 w-28 bg-zinc-200 dark:bg-zinc-800 rounded mt-6" />
     </div>
@@ -31,10 +31,6 @@ export function ArticleCardSkeleton() {
 interface ArticleGridSkeletonProps {
   count?: number;
 }
-
-/**
- * Grid of ArticleCardSkeletons matching the ArticleGrid structure.
- */
 export function ArticleGridSkeleton({ count = 6 }: ArticleGridSkeletonProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -5,9 +5,6 @@ interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
 }
 
-/**
- * Generic Strapi response envelope shared by every endpoint.
- */
 export interface StrapiResponse<T> {
   data: T;
   meta?: {
@@ -20,10 +17,6 @@ export interface StrapiResponse<T> {
   };
 }
 
-/**
- * Low-level, type-safe transport for the Strapi REST API.
- * Domain-specific fetching lives in `@/api/<domain>` modules built on top of this.
- */
 export async function fetchStrapi<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const cleanPath = path.replace(/^\//, "");
   const url = new URL(`/api/${cleanPath}`, STRAPI_URL);

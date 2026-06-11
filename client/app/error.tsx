@@ -10,7 +10,6 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // Log the error to your console or monitoring service (e.g. Sentry)
     console.error("Next.js Error Boundary caught an unhandled error:", error);
   }, [error]);
 
