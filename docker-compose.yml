@@ -48,8 +48,16 @@ services:
       - TRANSFER_TOKEN_SALT=${TRANSFER_TOKEN_SALT}
       - JWT_SECRET=${JWT_SECRET}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - DATABASE_CLIENT=sqlite
-      - DATABASE_FILENAME=.tmp/data.db
+      - DATABASE_CLIENT=${DATABASE_CLIENT:-mysql}
+      - DATABASE_HOST=${DATABASE_HOST:-host.docker.internal}
+      - DATABASE_PORT=${DATABASE_PORT:-3306}
+      - DATABASE_NAME=${DATABASE_NAME:-strapi}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-strapi}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-strapi}
+      - DATABASE_SSL=${DATABASE_SSL:-false}
+      - DATABASE_FILENAME=${DATABASE_FILENAME:-.tmp/data.db}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - strapi-db:/opt/app/.tmp
       - strapi-uploads:/opt/app/public/uploads

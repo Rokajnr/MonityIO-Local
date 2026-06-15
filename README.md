@@ -81,3 +81,39 @@ All outputs from both servers will be multiplexed in your terminal and color-cod
 - `[server]` logs will be in **magenta**.
 
 ---
+
+## Docker Deployment
+
+To deploy the application (Next.js frontend and Strapi backend) using Docker:
+
+### 1. Configure Production Environment Variables
+
+Copy the production environment example file to the root `.env` (or configure the equivalent variables on your host/CI environment):
+
+```bash
+cp .env.production.example .env
+```
+
+Ensure all database connection parameters for your running MySQL instance are populated:
+
+* `DATABASE_CLIENT`: Set to `mysql` (default in Docker)
+* `DATABASE_HOST`: Set to your MySQL host (use `host.docker.internal` if the database runs on the same Docker host machine)
+* `DATABASE_PORT`: MySQL port (typically `3306`)
+* `DATABASE_NAME`: Name of your Strapi database
+* `DATABASE_USERNAME`: Database username
+* `DATABASE_PASSWORD`: Database password
+
+Also fill in the secret keys and token salts needed for Strapi and the domain/URL variables for Next.js.
+
+### 2. Start the Services
+
+Build and run the Docker containers in the background:
+
+```bash
+docker compose up -d --build
+```
+
+This will build the images for both the frontend client and backend server, configure them, and start the containers.
+
+---
+
