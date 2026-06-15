@@ -26,6 +26,7 @@ COPY . .
 
 # Build the Strapi admin panel and backend code
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm run build
 
 # Remove development dependencies to keep the image slim
