@@ -22,7 +22,7 @@ jobs:
             set -e
 
             echo "=== Starting deployment ==="
-            cd /var/www/monityio
+            cd /var/www/website
 
             # 1. Clean local state and fetch latest code to avoid conflicts
             echo "Fetching latest changes..."
