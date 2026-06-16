@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Deploy
 
 on:
   push:
@@ -7,22 +7,23 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Application
+    name: Deploy CMS &  Website
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy SSH
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            set -e
+            set -eo pipefail
 
             echo "=== Starting deployment ==="
-            cd /var/www/website
+            cd ${{ secrets.REMOTE_PATH }}
 
             # 1. Clean local state and fetch latest code to avoid conflicts
             echo "Fetching latest changes..."
