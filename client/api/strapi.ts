@@ -1,6 +1,9 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL;
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
+const DEFAULT_REVALIDATE_SECONDS =
+  Number(process.env.STRAPI_REVALIDATE_SECONDS) || 3600;
+
 export const STRAPI_ADMIN_URL = STRAPI_URL
   ? new URL("/admin", STRAPI_URL).toString()
   : "/admin";
@@ -37,9 +40,16 @@ export async function fetchStrapi<T>(path: string, options: FetchOptions = {}): 
     headers.set("Authorization", `Bearer ${STRAPI_TOKEN}`);
   }
 
+  const resource = cleanPath.split("/")[0];
+
   const res = await fetch(url.toString(), {
     ...options,
     headers,
+    next: {
+      revalidate: DEFAULT_REVALIDATE_SECONDS,
+      tags: resource ? [resource] : [],
+      ...options.next,
+    },
   });
 
   if (!res.ok) {
