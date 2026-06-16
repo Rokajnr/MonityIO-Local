@@ -24,8 +24,11 @@ jobs:
 
             echo "=== Starting deployment ==="
             cd ${{ secrets.REMOTE_PATH }}
+            echo "Changed to directory ${{ secrets.REMOTE_PATH }}"
 
             # 1. Clean local state and fetch latest code to avoid conflicts
+            git config --global --add safe.directory ${{ secrets.REMOTE_PATH }}
+
             echo "Fetching latest changes..."
             git fetch origin main
             git reset --hard origin/main
@@ -37,16 +40,18 @@ jobs:
             # 3. Post-deployment health verification loop
             echo "Verifying deployment health..."
             HEALTHY=false
-            for i in {1..12}; do
+            # Strapi's healthcheck allows up to a 240s boot window, so poll for
+            # ~5 minutes (60 * 5s) to avoid failing the deploy while it boots.
+            for i in {1..60}; do
               # Count how many containers are reported as "(healthy)" by Docker Compose
               HEALTHY_COUNT=$(docker compose ps | grep -o "healthy" | wc -l || true)
-              
+
               if [ "$HEALTHY_COUNT" -eq "2" ]; then
                 echo "All containers are healthy!"
                 HEALTHY=true
                 break
               fi
-              
+
               echo "Waiting for containers to boot... status: $HEALTHY_COUNT/2 healthy ($((i*5))s elapsed)"
               sleep 5
             done
