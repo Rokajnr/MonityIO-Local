@@ -34,16 +34,13 @@ jobs:
             git reset --hard FETCH_HEAD
 
             # 2. Restart containers using existing images and wait for health.
-            # --wait blocks until every container is healthy/running and exits
-            # non-zero if any doesn't make it within the timeout. The 300s window
-            # covers Strapi's 240s healthcheck boot allowance.
             echo "Restarting Docker containers (waiting for health)..."
             if ! docker compose up -d --remove-orphans --wait --wait-timeout 300; then
               echo "::error::Deployment failed! One or more containers did not become healthy."
               echo "=== Docker Compose Status ==="
               docker compose ps
               echo "=== Recent Container Logs ==="
-              docker compose logs --tail=50
+              docker compose logs --tail=100
               exit 1
             fi
 
