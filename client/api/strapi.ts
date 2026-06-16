@@ -1,6 +1,10 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL;
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
+export const STRAPI_ADMIN_URL = STRAPI_URL
+  ? new URL("/admin", STRAPI_URL).toString()
+  : "/admin";
+
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
 }

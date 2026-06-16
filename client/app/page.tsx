@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { STRAPI_ADMIN_URL } from "@/api/strapi";
 
 export default function Home() {
   return (
@@ -19,10 +20,10 @@ export default function Home() {
             >
               Blog
             </Link>
-            <a 
-              href="http://localhost:1337/admin" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={STRAPI_ADMIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
             >
               CMS Admin
@@ -57,7 +58,7 @@ export default function Home() {
               📖 Explore Articles
             </Link>
             <a
-              href="http://localhost:1337/admin"
+              href={STRAPI_ADMIN_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto h-12 px-8 rounded-full border border-zinc-800 bg-zinc-900/20 text-zinc-300 font-semibold hover:bg-zinc-900 transition-colors flex items-center justify-center"
