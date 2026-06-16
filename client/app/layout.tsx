@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MonityIO",
   description: "",
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
