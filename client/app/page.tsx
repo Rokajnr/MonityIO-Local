@@ -1,126 +1,76 @@
-import Link from "next/link";
-import { STRAPI_ADMIN_URL } from "@/api/strapi";
-
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans flex flex-col justify-between selection:bg-zinc-800 selection:text-white">
-      
-      {/* Navigation Bar */}
-      <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-200 to-zinc-500">
-              MONITY<span className="text-zinc-500">IO</span>
-            </span>
-          </div>
-          <nav className="flex items-center gap-6">
-            <Link 
-              href="/articles" 
-              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
-            >
-              Blog
-            </Link>
-            <a
-              href={STRAPI_ADMIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
-            >
-              CMS Admin
-            </a>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col border border-zinc-900">
+      <div className="flex-1 flex flex-col md:flex-row min-h-0">
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 md:py-24 flex flex-col justify-center gap-16 md:gap-24">
-        
-        {/* Hero Section */}
-        <section className="text-center md:text-left md:max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/40 text-xs font-medium text-zinc-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Active Observability System
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight text-white">
-            Observe everything, <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-600">
-              instantly.
-            </span>
+        {/* Left content */}
+        <div className="flex-1 flex flex-col items-start justify-center px-5 py-8 md:px-10 md:py-12">
+
+          {/* <img
+            src="/images/monityio-logo.svg"
+            alt="MonityIO"
+            className="w-[110px] md:w-[130px] mb-6 md:mb-8"
+          /> */}
+
+          <h1
+            className="font-[family-name:var(--font-bricolage)] font-extrabold text-white tracking-tight mb-6 md:mb-8"
+            style={{ fontSize: "clamp(1.7rem, 5vw, 3.4rem)", lineHeight: 1.05, letterSpacing: "-1px" }}
+          >
+            We build software that powers{" "}
+            <span className="text-red-600 italic">business growth.</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-zinc-400 leading-relaxed">
-            Welcome to MonityIO. We build next-generation observation, headless content distribution, and modular React services designed to help enterprise systems scale seamlessly.
+
+          <div className="w-12 h-0.5 bg-orange-500 rounded-full mb-6 md:mb-8" />
+
+          <p className="font-[family-name:var(--font-hanken)] font-light text-zinc-400 leading-relaxed max-w-md mb-8 md:mb-10 text-sm md:text-base">
+            Custom software. Seamless integration. Smart solutions.
+            <br />
+            We help businesses innovate, automate and scale with confidence.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-            <Link
-              href="/articles"
-              className="w-full sm:w-auto h-12 px-8 rounded-full bg-white text-zinc-950 font-bold hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-3 sm:gap-4 w-full sm:w-auto">
+            
+             <a href="mailto:info@monityio.com"
+              className="font-[family-name:var(--font-hanken)] font-medium text-blue-400 hover:underline text-base md:text-lg"
             >
-              📖 Explore Articles
-            </Link>
-            <a
-              href={STRAPI_ADMIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto h-12 px-8 rounded-full border border-zinc-800 bg-zinc-900/20 text-zinc-300 font-semibold hover:bg-zinc-900 transition-colors flex items-center justify-center"
-            >
-              Manage CMS Console
+              info@monityio.com
             </a>
+            <span className="hidden sm:inline text-zinc-600 text-xs">or</span>
+            <button className="w-full sm:w-auto bg-zinc-100 text-zinc-950 hover:bg-white font-medium text-sm rounded-md px-5 py-3 sm:py-2.5 transition-colors">
+              I have a project
+            </button>
           </div>
-        </section>
+        </div>
 
-        {/* Bento/Features Grid */}
-        <section className="grid gap-6 md:grid-cols-3">
-          
-          {/* Card 1: Observability */}
-          <div className="group rounded-3xl border border-zinc-900 bg-zinc-900/20 p-8 hover:border-zinc-800 transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center mb-6 border border-zinc-800">
-              📈
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Metrics Observability</h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">
-              Track infrastructure, api endpoints, and system response latency with ultra-high resolution telemetry.
-            </p>
-          </div>
-
-          {/* Card 2: Headless CMS */}
-          <div className="group rounded-3xl border border-zinc-900 bg-zinc-900/20 p-8 hover:border-zinc-800 transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center mb-6 border border-zinc-800">
-              ⚡
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Headless Strapi Engine</h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">
-              Dynamically load blogs, team data, layouts, and page parameters through our modular, headless Strapi 5 configuration.
-            </p>
-          </div>
-
-          {/* Card 3: Modern Tech */}
-          <div className="group rounded-3xl border border-zinc-900 bg-zinc-900/20 p-8 hover:border-zinc-800 transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center mb-6 border border-zinc-800">
-              ⚛️
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Next.js & React 19</h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">
-              Engineered using React Server Components (RSC) and strict TypeScript interfaces for sub-second page performance.
-            </p>
-          </div>
-
-        </section>
-
-      </main>
+        {/* Right image panel */}
+        <div className="relative w-full md:w-[45%] min-h-[260px] md:min-h-[400px] order-first md:order-last flex-shrink-0">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url('/assets/coming-soon-bg.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center top",
+            }}
+          />
+          <div
+            className="absolute inset-0 md:bg-gradient-to-r"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 40%, rgba(13,13,13,0.9) 100%)",
+            }}
+          />
+        </div>
+      </div>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-900 bg-zinc-950 py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
-          <div>
-            &copy; {new Date().getFullYear()} MonityIO. All rights reserved.
-          </div>
-          <div className="flex gap-6">
-            <a href="https://nextjs.org" className="hover:text-zinc-400">Next.js</a>
-            <a href="https://strapi.io" className="hover:text-zinc-400">Strapi</a>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-2 px-5 py-4 md:px-10 border-t border-zinc-900">
+        <span className="text-[11px] text-zinc-600 font-light">© 2026 MonityIO</span>
+        <div className="flex gap-3 sm:gap-5">
+          <span className="text-[11px] text-zinc-600">Development</span>
+          <span className="text-[11px] text-zinc-600">UI &amp; UX design</span>
+          <span className="text-[11px] text-zinc-600">Product strategy</span>
         </div>
-      </footer>
-
+      </div>
     </div>
   );
 }
