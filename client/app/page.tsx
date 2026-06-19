@@ -43,7 +43,7 @@ export default function Home() {
         </div>
 
         {/* Right image panel */}
-        <div className="relative w-full md:w-[45%] min-h-[260px] md:min-h-[400px] order-first md:order-last flex-shrink-0">
+        <div className="relative w-full md:w-[45%] min-h-[440px] md:min-h-[400px] order-first md:order-last flex-shrink-0">
           <div
             className="absolute inset-0"
             style={{
