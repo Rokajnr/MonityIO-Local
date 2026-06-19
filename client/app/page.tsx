@@ -14,9 +14,9 @@ export default function Home() {
 
           <h1
             className="font-[family-name:var(--font-bricolage)] font-extrabold text-white tracking-tight mb-6 md:mb-8"
-            style={{ fontSize: "clamp(1.7rem, 5vw, 3.4rem)", lineHeight: 1.05, letterSpacing: "-1px" }}
+            style={{ fontSize: "clamp(2.3rem, 5.4vw, 4rem)", lineHeight: 1.05, letterSpacing: "-1px" }}
           >
-            We build software that powers{" "}
+            we build software that powers{" "}
             <span className="text-red-600 italic">business growth.</span>
           </h1>
 
