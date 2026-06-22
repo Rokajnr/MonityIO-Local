@@ -378,6 +378,113 @@ export default function Home() {
         </div>
       </section>
 
+      {/* STANDARDS */}
+      <section
+        id="standards"
+        className="grid grid-cols-1 lg:grid-cols-2 border-t border-[#DDD9D0] bg-[#F7F6F2]"
+      >
+
+        {/* LEFT VISUAL PANEL */}
+        <div className="relative bg-zinc-950 min-h-[480px] flex flex-col justify-end p-10 overflow-hidden">
+
+          {/* Grid overlay */}
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+              backgroundSize: "36px 36px",
+            }}
+          />
+
+          {/* Faint M logo */}
+          <svg
+            className="absolute top-1/2 left-1/2 w-[280px] h-[280px] -translate-x-1/2 -translate-y-1/2 opacity-10"
+            viewBox="0 0 280 280"
+            fill="none"
+          >
+            <path
+              d="M20 240 L20 40 L140 160 L260 40 L260 240"
+              stroke="white"
+              strokeWidth="28"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+
+          {/* Color bar */}
+          <div className="relative z-10 flex mb-6">
+            <div className="h-[3px] flex-1 bg-red-600" />
+            <div className="h-[3px] flex-1 bg-orange-500" />
+            <div className="h-[3px] flex-1 bg-yellow-500" />
+            <div className="h-[3px] flex-1 bg-blue-600" />
+          </div>
+
+          {/* Caption */}
+          <div className="relative z-10 max-w-xs text-zinc-400 text-sm leading-6">
+            <p className="text-zinc-200 font-medium mb-2">
+              Real-time operational visibility
+            </p>
+            <p>
+              Every data point verified. Every alert meaningful. Zero noise in,
+              zero guesswork out.
+            </p>
+          </div>
+
+        </div>
+
+        {/* RIGHT CONTENT PANEL */}
+        <div className="p-10 lg:p-16 flex flex-col justify-center border-l border-[#DDD9D0]">
+
+          <span className="uppercase tracking-widest text-xs text-zinc-500 mb-4">
+            The MonityIO Standard
+          </span>
+
+          <h2 className="text-4xl lg:text-5xl leading-tight font-serif mb-6">
+            Enterprise-grade standards on{" "}
+            <i className="text-zinc-500">every deployment.</i>
+          </h2>
+
+          <p className="text-zinc-600 leading-8 mb-10 max-w-xl">
+            Modeled on best-practice intelligence environments, we enforce data
+            integrity, access control, and auditability at every layer. No
+            unverified data reaches decision-makers.
+          </p>
+
+          <button className="self-start bg-zinc-900 text-white px-6 py-3 rounded-full hover:bg-zinc-800 transition">
+            Explore Our Approach →
+          </button>
+
+          {/* Stats */}
+          <div className="flex flex-col sm:flex-row gap-8 mt-10">
+
+            <div className="border-t-2 border-red-600 pt-4 flex-1">
+              <div className="text-3xl font-serif text-red-600">4–8</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">
+                Weeks to first insight
+              </div>
+            </div>
+
+            <div className="border-t-2 border-blue-600 pt-4 flex-1">
+              <div className="text-3xl font-serif text-blue-600">360°</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">
+                Operational coverage
+              </div>
+            </div>
+
+            <div className="border-t-2 border-yellow-500 pt-4 flex-1">
+              <div className="text-3xl font-serif text-yellow-600">Zero</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">
+                Systems replaced
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
       {/* INDUSTRIES */}
       <section
         id="industries"
