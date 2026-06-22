@@ -3,6 +3,17 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       {/* NAVBAR */}
@@ -328,6 +339,107 @@ export default function Home() {
                 <p className="text-sm text-zinc-600 leading-7">
                   Built to provide operational visibility and
                   intelligence without replacing existing systems.
+                </p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* INDUSTRIES */}
+      <section
+        id="industries"
+        className="border-t border-[#DDD9D0] bg-[#F7F6F2]"
+      >
+        <div className="max-w-7xl mx-auto px-6 py-24">
+
+          <div className="flex flex-col lg:flex-row lg:justify-between gap-10 mb-16">
+
+            <h2
+              className="
+                font-[family-name:var(--font-serif)]
+                text-5xl
+                leading-tight
+              "
+            >
+              Built for organizations
+              <br />
+              running the <i>real economy.</i>
+            </h2>
+
+            <p className="max-w-md text-zinc-600 leading-8">
+              We specialize in complex, multi-stakeholder environments where
+              operational visibility is not optional — it is mission critical.
+            </p>
+
+          </div>
+
+          <div
+            className="
+              grid
+              md:grid-cols-2
+              lg:grid-cols-5
+              border
+              border-[#DDD9D0]
+            "
+          >
+
+            {[
+              {
+                icon: "🌍",
+                title: "NGOs & Development",
+                tag: "Donor compliance · Field operations",
+              },
+              {
+                icon: "🏛",
+                title: "Government & Public Sector",
+                tag: "Programmes · Budgets · Delivery",
+              },
+              {
+                icon: "🏢",
+                title: "SMEs & Enterprises",
+                tag: "Performance · Financial visibility",
+              },
+              {
+                icon: "🏗",
+                title: "Construction & Infrastructure",
+                tag: "Projects · Compliance · Progress",
+              },
+              {
+                icon: "🚚",
+                title: "Logistics & Supply Chain",
+                tag: "Routes · Inventory · Deliveries",
+              },
+            ].map((sector) => (
+              <div
+                key={sector.title}
+                className="
+                  p-8
+                  border-r
+                  border-[#DDD9D0]
+                  last:border-r-0
+                  hover:bg-[#F0EDE6]
+                  transition-colors
+                "
+              >
+                <div className="text-3xl mb-4">
+                  {sector.icon}
+                </div>
+
+                <h3
+                  className="
+                    font-[family-name:var(--font-serif)]
+                    text-xl
+                    leading-snug
+                    mb-3
+                  "
+                >
+                  {sector.title}
+                </h3>
+
+                <p className="text-xs uppercase tracking-widest text-zinc-500">
+                  {sector.tag}
                 </p>
               </div>
             ))}
