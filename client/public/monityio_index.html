@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MonityIO — Operations Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Brand colors from logo */
+  --red:    #E8291C;
+  --blue:   #2B6CB8;
+  --orange: #E07020;
+  --gold:   #F0B020;
+
+  /* Surface palette — warm paper, editorial */
+  --paper:       #F7F6F2;
+  --paper-warm:  #F0EDE6;
+  --paper-dark:  #EAE7E0;
+  --ink:         #111110;
+  --ink-mid:     #3D3C39;
+  --ink-light:   #888680;
+  --ink-faint:   #C5C2BB;
+  --border:      #DDD9D0;
+
+  /* Tinted utility surfaces (very subtle) */
+  --red-wash:    rgba(232,41,28,.05);
+  --blue-wash:   rgba(43,108,184,.06);
+  --orange-wash: rgba(224,112,32,.05);
+  --gold-wash:   rgba(240,176,32,.06);
+
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans:  'Inter', -apple-system, sans-serif;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--blue); color: #fff; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--ink-faint); }
+
+/* ── CURSOR ── */
+.cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--ink); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s, opacity .2s;
+  mix-blend-mode: multiply;
+}
+.cursor.hover { width: 28px; height: 28px; background: var(--blue); opacity: .45; }
+@media(hover:none){ .cursor { display:none; } }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 62px;
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s, background .3s, backdrop-filter .3s;
+}
+nav.scrolled {
+  border-color: var(--border);
+  background: rgba(247,246,242,.94);
+  backdrop-filter: blur(14px);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo img {
+  height: 32px; width: auto; display: block;
+}
+.nav-logo-text {
+  font-family: var(--sans); font-size: .875rem; font-weight: 600;
+  color: var(--ink); letter-spacing: -.01em; line-height: 1;
+}
+.nav-logo-text .red  { color: var(--red); }
+.nav-logo-text .blue { color: var(--blue); }
+
+.nav-center { display: flex; gap: 2rem; }
+.nav-center a {
+  color: var(--ink-light); font-size: .8rem; font-weight: 500;
+  text-decoration: none; letter-spacing: .01em; transition: color .2s;
+}
+.nav-center a:hover { color: var(--ink); }
+
+.nav-right { display: flex; align-items: center; gap: .875rem; }
+.nav-btn {
+  font-size: .8rem; font-weight: 600; padding: .45rem 1.1rem;
+  border-radius: 100px; text-decoration: none; transition: .2s;
+  letter-spacing: .01em; white-space: nowrap;
+}
+.nav-btn.ghost {
+  color: var(--ink-mid); border: 1px solid var(--border); background: transparent;
+}
+.nav-btn.ghost:hover { border-color: var(--ink); color: var(--ink); }
+.nav-btn.solid {
+  background: var(--red); color: #fff; border: 1px solid var(--red);
+}
+.nav-btn.solid:hover { background: #c82216; border-color: #c8221f; }
+
+/* ── TICKER ── */
+.ticker-bar {
+  position: fixed; top: 62px; left: 0; right: 0; z-index: 199;
+  display: flex; align-items: center; height: 34px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(247,246,242,.94); backdrop-filter: blur(14px);
+  overflow: hidden; white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s;
+}
+.ticker-bar.visible { opacity: 1; }
+.ticker-track {
+  display: flex; animation: ticker 30s linear infinite;
+}
+.ticker-item {
+  display: inline-flex; align-items: center; gap: .75rem;
+  font-size: .65rem; font-weight: 600; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-light);
+  padding: 0 2rem;
+}
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.dot-red    { background: var(--red); }
+.dot-blue   { background: var(--blue); }
+.dot-orange { background: var(--orange); }
+.dot-gold   { background: var(--gold); }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 5% 5.5%;
+  padding-top: calc(62px + 34px);
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Four-color top border stripe — from logo */
+.hero-stripe {
+  position: absolute; top: calc(62px + 34px); left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    var(--red)    0% 25%,
+    var(--orange) 25% 50%,
+    var(--gold)   50% 75%,
+    var(--blue)   75% 100%
+  );
+  opacity: 0;
+  transform-origin: left;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .68rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-light);
+  margin-bottom: 2.5rem; opacity: 0;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--red);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(3.8rem, 8.5vw, 9rem);
+  line-height: .93; letter-spacing: -.025em;
+  color: var(--ink); max-width: 950px;
+  margin-bottom: 4.5rem; opacity: 0;
+}
+.hero-headline i { font-style: italic; color: var(--ink-mid); }
+/* Coloured single words — deliberate, not decorative */
+.hero-headline .hl-red  { color: var(--red); font-style: normal; }
+.hero-headline .hl-blue { color: var(--blue); font-style: normal; }
+
+.hero-bottom {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 3rem;
+  opacity: 0;
+}
+.hero-sub {
+  max-width: 400px; font-size: 1rem;
+  color: var(--ink-mid); line-height: 1.75; font-weight: 400;
+}
+.hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: .875rem; }
+
+.btn-large {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-size: .875rem; font-weight: 600; padding: .75rem 1.75rem;
+  border-radius: 100px; text-decoration: none; transition: .2s;
+  letter-spacing: .01em; white-space: nowrap;
+}
+.btn-large.primary { background: var(--ink); color: var(--paper); }
+.btn-large.primary:hover { background: var(--ink-mid); transform: translateY(-1px); }
+.btn-large.outline {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--border);
+}
+.btn-large.outline:hover { border-color: var(--ink); transform: translateY(-1px); }
+.btn-large.red-btn { background: var(--red); color: #fff; }
+.btn-large.red-btn:hover { background: #c8221f; transform: translateY(-1px); }
+.btn-arrow { transition: transform .2s; }
+.btn-large:hover .btn-arrow { transform: translateX(4px); }
+
+.hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint); opacity: 0;
+}
+.scroll-line {
+  width: 1px; height: 36px;
+  background: linear-gradient(to bottom, var(--ink-faint), transparent);
+  animation: scroll-drop 2.2s ease-in-out infinite;
+}
+@keyframes scroll-drop {
+  0%,100%{transform:scaleY(1);opacity:.5}
+  50%{transform:scaleY(.4);opacity:1}
+}
+
+/* ── SECTION SHARED ── */
+.section-label {
+  font-size: .68rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-light);
+}
+
+/* ── PROCESS ── */
+#process { border-bottom: 1px solid var(--border); }
+
+.process-intro {
+  padding: 6rem 5% 4rem;
+  display: grid; grid-template-columns: 200px 1fr;
+  gap: 3rem; align-items: start;
+  border-bottom: 1px solid var(--border);
+}
+.process-intro-text {
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 2.8vw, 2.5rem);
+  line-height: 1.25; letter-spacing: -.015em;
+}
+.process-intro-text i { font-style: italic; color: var(--ink-mid); }
+
+.process-step {
+  display: grid; grid-template-columns: 130px 1fr 1fr;
+  gap: 3rem; padding: 3.5rem 5%;
+  border-bottom: 1px solid var(--border);
+  position: relative; transition: background .25s;
+  opacity: 0; transform: translateY(16px);
+}
+.process-step:hover { background: var(--paper-warm); }
+
+/* Left accent bar — each step gets a brand color */
+.process-step::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; opacity: 0; transition: opacity .3s;
+}
+.process-step:hover::before { opacity: 1; }
+.ps-red::before    { background: var(--red); }
+.ps-orange::before { background: var(--orange); }
+.ps-gold::before   { background: var(--gold); }
+.ps-blue::before   { background: var(--blue); }
+
+.step-num {
+  font-family: var(--serif); font-size: 5rem; line-height: 1;
+  color: var(--ink-faint); letter-spacing: -.04em;
+  transition: color .3s;
+}
+.process-step:hover.ps-red    .step-num { color: var(--red); }
+.process-step:hover.ps-orange .step-num { color: var(--orange); }
+.process-step:hover.ps-gold   .step-num { color: var(--gold); }
+.process-step:hover.ps-blue   .step-num { color: var(--blue); }
+
+.step-title {
+  font-family: var(--serif); font-size: 1.6rem;
+  letter-spacing: -.02em; line-height: 1.2; padding-top: .4rem;
+}
+.step-title i { font-style: italic; color: var(--ink-mid); }
+.step-body { color: var(--ink-mid); font-size: .875rem; line-height: 1.8; padding-top: .55rem; }
+
+.step-tag {
+  display: inline-block; margin-top: 1.5rem;
+  font-size: .62rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: .3rem .8rem; border-radius: 100px;
+}
+.tag-red    { color: var(--red);    background: var(--red-wash);    border: 1px solid rgba(232,41,28,.15); }
+.tag-orange { color: var(--orange); background: var(--orange-wash); border: 1px solid rgba(224,112,32,.15); }
+.tag-gold   { color: #9a7010;       background: var(--gold-wash);   border: 1px solid rgba(240,176,32,.2); }
+.tag-blue   { color: var(--blue);   background: var(--blue-wash);   border: 1px solid rgba(43,108,184,.15); }
+
+/* ── FEATURES ── */
+#features { padding: 7rem 5%; border-bottom: 1px solid var(--border); }
+
+.features-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 3rem; margin-bottom: 5rem;
+}
+.features-title {
+  font-family: var(--serif); font-size: clamp(2rem, 3.2vw, 3rem);
+  letter-spacing: -.02em; line-height: 1.15; max-width: 500px;
+}
+.features-title i { font-style: italic; color: var(--ink-mid); }
+.features-sub {
+  max-width: 340px; color: var(--ink-mid); font-size: .875rem;
+  line-height: 1.75; padding-top: .3rem;
+}
+
+.features-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.feature-card {
+  padding: 2.5rem 1.75rem; border-right: 1px solid var(--border);
+  transition: background .2s; position: relative; overflow: hidden;
+}
+.feature-card:last-child { border-right: none; }
+.feature-card:hover { background: var(--paper-warm); }
+
+/* Top color stripe per card */
+.feature-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  opacity: 0; transition: opacity .25s;
+}
+.fc-red::after    { background: var(--red);    opacity: 1; }
+.fc-orange::after { background: var(--orange); opacity: 1; }
+.fc-gold::after   { background: var(--gold);   opacity: 1; }
+.fc-blue::after   { background: var(--blue);   opacity: 1; }
+
+.fc-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.75rem;
+}
+.fc-icon svg { width: 18px; height: 18px; }
+.fc-icon-red    { background: var(--red-wash); }
+.fc-icon-orange { background: var(--orange-wash); }
+.fc-icon-gold   { background: var(--gold-wash); }
+.fc-icon-blue   { background: var(--blue-wash); }
+
+.fc-title {
+  font-family: var(--serif); font-size: 1.15rem;
+  letter-spacing: -.01em; margin-bottom: .7rem; line-height: 1.2;
+}
+.fc-body { color: var(--ink-mid); font-size: .82rem; line-height: 1.75; }
+
+/* ── DARK SPLIT ── */
+#standards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.standards-visual {
+  background: var(--ink); position: relative;
+  overflow: hidden; min-height: 480px;
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 3.5rem;
+}
+
+/* M logo mark recreated as background shape in brand colors */
+.std-bg-logo {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-58%);
+  width: 280px; height: 280px; opacity: .06;
+}
+
+.std-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* Color block row at bottom of dark panel — echoes logo palette */
+.std-color-row {
+  display: flex; gap: 0; margin-bottom: 1.5rem; position: relative; z-index: 1;
+}
+.std-color-swatch {
+  height: 3px; flex: 1;
+}
+
+.std-caption {
+  position: relative; z-index: 1;
+  color: rgba(255,255,255,.45); font-size: .8rem; line-height: 1.65; max-width: 260px;
+}
+.std-caption strong { color: rgba(255,255,255,.85); display: block; font-size: .95rem; margin-bottom: .4rem; font-weight: 500; }
+
+.standards-content {
+  padding: 5rem; border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.standards-title {
+  font-family: var(--serif); font-size: clamp(1.9rem, 3vw, 2.8rem);
+  letter-spacing: -.02em; line-height: 1.15; margin: 1.25rem 0 1.25rem;
+}
+.standards-title i { font-style: italic; color: var(--ink-mid); }
+.standards-body { color: var(--ink-mid); font-size: .875rem; line-height: 1.8; margin-bottom: 2.5rem; }
+
+.stat-row { display: flex; gap: 2.5rem; margin-top: 2rem; }
+.stat-item { border-top: 2px solid; padding-top: 1.1rem; flex: 1; }
+.stat-item.s-red    { border-color: var(--red); }
+.stat-item.s-blue   { border-color: var(--blue); }
+.stat-item.s-gold   { border-color: var(--gold); }
+.stat-num {
+  font-family: var(--serif); font-size: 2.4rem;
+  letter-spacing: -.03em; line-height: 1; margin-bottom: .25rem;
+}
+.s-red  .stat-num { color: var(--red); }
+.s-blue .stat-num { color: var(--blue); }
+.s-gold .stat-num { color: #9a7010; }
+.stat-label { font-size: .72rem; color: var(--ink-light); letter-spacing: .02em; }
+
+/* ── FAQ ── */
+#faq { padding: 7rem 5%; border-bottom: 1px solid var(--border); }
+.faq-header {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 4rem;
+}
+.faq-title {
+  font-family: var(--serif); font-size: clamp(2rem, 3vw, 3rem);
+  letter-spacing: -.02em; line-height: 1.1;
+}
+.faq-note { color: var(--ink-mid); font-size: .875rem; line-height: 1.75; padding-top: .3rem; }
+
+.faq-item { border-top: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%; text-align: left; background: none; border: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 0; cursor: pointer; gap: 2rem;
+  font-family: var(--sans); font-size: .925rem; font-weight: 500;
+  color: var(--ink); letter-spacing: -.01em; transition: color .2s;
+}
+.faq-q:hover { color: var(--ink-mid); }
+.faq-toggle {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: var(--ink-light);
+  transition: transform .35s, border-color .2s, background .2s, color .2s;
+}
+.faq-item.open .faq-toggle {
+  transform: rotate(45deg);
+  background: var(--red); border-color: var(--red); color: #fff;
+}
+.faq-answer { overflow: hidden; max-height: 0; transition: max-height .42s cubic-bezier(.4,0,.2,1); }
+.faq-inner {
+  padding-bottom: 1.75rem; color: var(--ink-mid); font-size: .875rem;
+  line-height: 1.82; max-width: 660px;
+}
+
+/* ── SECTORS ── */
+#sectors { padding: 7rem 5%; border-bottom: 1px solid var(--border); }
+.sectors-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 3rem; margin-bottom: 3.5rem;
+}
+.sectors-title {
+  font-family: var(--serif); font-size: clamp(2rem, 3vw, 2.8rem);
+  letter-spacing: -.02em; line-height: 1.1;
+}
+.sectors-title i { font-style: italic; color: var(--ink-mid); }
+.sectors-sub { max-width: 320px; color: var(--ink-mid); font-size: .875rem; line-height: 1.75; }
+
+.sectors-grid {
+  display: grid; grid-template-columns: repeat(5,1fr);
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.sector-card {
+  padding: 2rem 1.5rem; border-right: 1px solid var(--border);
+  transition: background .2s; cursor: default;
+  display: flex; flex-direction: column; gap: .75rem;
+}
+.sector-card:last-child { border-right: none; }
+.sector-card:hover { background: var(--paper-warm); }
+.sector-icon { font-size: 1.6rem; }
+.sector-name {
+  font-family: var(--serif); font-size: 1rem; letter-spacing: -.01em; line-height: 1.3;
+}
+.sector-tag {
+  font-size: .62rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+
+/* ── CTA ── */
+#cta {
+  padding: 9rem 5%; text-align: center;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+/* Subtle gradient from logo gold */
+.cta-wash {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 55% at 50% 90%, rgba(240,176,32,.08), transparent);
+  pointer-events: none;
+}
+.cta-logo-center {
+  display: flex; justify-content: center; margin-bottom: 2rem; opacity: 0;
+}
+.cta-logo-center img { height: 52px; width: auto; }
+.cta-title {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  letter-spacing: -.03em; line-height: .94;
+  margin-bottom: 2.5rem; position: relative;
+}
+.cta-title i { font-style: italic; color: var(--ink-mid); }
+.cta-title .hl-red { color: var(--red); }
+.cta-actions {
+  display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;
+}
+.contact-note {
+  margin-top: 2rem; font-size: .8rem; color: var(--ink-light);
+  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+}
+.contact-note a { color: var(--ink-light); text-decoration: none; transition: color .2s; }
+.contact-note a:hover { color: var(--ink); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 2.5rem 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-logo { display: flex; align-items: center; gap: 8px; }
+.footer-logo img { height: 24px; width: auto; }
+.footer-logo-text { font-size: .8rem; font-weight: 600; color: var(--ink); letter-spacing: -.01em; }
+.footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+.footer-links a {
+  font-size: .75rem; color: var(--ink-light); text-decoration: none; transition: color .2s;
+}
+.footer-links a:hover { color: var(--ink); }
+.footer-copy { font-size: .72rem; color: var(--ink-faint); }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 900px) {
+  .hero-bottom { flex-direction: column; align-items: flex-start; }
+  .hero-actions { align-items: flex-start; }
+  .process-intro { grid-template-columns: 1fr; gap: 1.5rem; }
+  .process-step { grid-template-columns: 70px 1fr; }
+  .process-step > .step-body { grid-column: 2; }
+  .step-num { font-size: 3.5rem; }
+  #standards { grid-template-columns: 1fr; }
+  .standards-content { padding: 3.5rem 5%; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .feature-card:nth-child(2n) { border-right: none; }
+  .feature-card:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .faq-header { grid-template-columns: 1fr; }
+  .sectors-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .sector-card:nth-child(3n) { border-right: none; }
+  .sector-card:nth-child(n+4) { border-top: 1px solid var(--border); }
+  .sectors-header { flex-direction: column; }
+  .stat-row { gap: 1.5rem; }
+}
+@media(max-width: 600px) {
+  nav .nav-center { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  .feature-card { border-right: none; border-top: 1px solid var(--border); }
+  .feature-card:first-child { border-top: none; }
+  .sectors-grid { grid-template-columns: 1fr 1fr; }
+  .sector-card:nth-child(2n) { border-right: none; }
+  .sector-card:nth-child(n+3) { border-top: 1px solid var(--border); }
+  footer { flex-direction: column; text-align: center; }
+  .standards-content { padding: 3rem 5%; }
+  .features-header { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo" aria-label="MonityIO home">
+    <img src="logo.png" alt="MonityIO logo"/>
+  </a>
+  <div class="nav-center">
+    <a href="#process">Our Process</a>
+    <a href="#features">Platform</a>
+    <a href="#sectors">Industries</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="nav-right">
+    <a href="#faq" class="nav-btn ghost">Learn More</a>
+    <a href="#cta" class="nav-btn solid">Request a Pilot</a>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar" id="ticker-bar">
+  <div class="ticker-track" aria-hidden="true">
+    <span class="ticker-item"><span class="ticker-dot dot-red"></span>Operations Intelligence</span>
+    <span class="ticker-item"><span class="ticker-dot dot-blue"></span>Real-Time Monitoring</span>
+    <span class="ticker-item"><span class="ticker-dot dot-orange"></span>Data Structuring</span>
+    <span class="ticker-item"><span class="ticker-dot dot-gold"></span>Financial Visibility</span>
+    <span class="ticker-item"><span class="ticker-dot dot-red"></span>Decision Support</span>
+    <span class="ticker-item"><span class="ticker-dot dot-blue"></span>Operational Control</span>
+    <span class="ticker-item"><span class="ticker-dot dot-orange"></span>Pilot in Weeks</span>
+    <span class="ticker-item"><span class="ticker-dot dot-gold"></span>Compliance Monitoring</span>
+    <span class="ticker-item"><span class="ticker-dot dot-red"></span>Operations Intelligence</span>
+    <span class="ticker-item"><span class="ticker-dot dot-blue"></span>Real-Time Monitoring</span>
+    <span class="ticker-item"><span class="ticker-dot dot-orange"></span>Data Structuring</span>
+    <span class="ticker-item"><span class="ticker-dot dot-gold"></span>Financial Visibility</span>
+    <span class="ticker-item"><span class="ticker-dot dot-red"></span>Decision Support</span>
+    <span class="ticker-item"><span class="ticker-dot dot-blue"></span>Operational Control</span>
+    <span class="ticker-item"><span class="ticker-dot dot-orange"></span>Pilot in Weeks</span>
+    <span class="ticker-item"><span class="ticker-dot dot-gold"></span>Compliance Monitoring</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-stripe" id="hero-stripe"></div>
+
+  <div class="hero-eyebrow" id="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Operations Intelligence Platform
+  </div>
+
+  <h1 class="hero-headline" id="hero-headline">
+    Your data,<br/>
+    finally <i>working</i><br/>
+    for <span class="hl-red">you.</span>
+  </h1>
+
+  <div class="hero-bottom" id="hero-bottom">
+    <p class="hero-sub">MonityIO transforms scattered operational data into clear, real-time intelligence — so your organization acts on facts, not on guesswork.</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-large red-btn">Request a Pilot <span class="btn-arrow">→</span></a>
+      <a href="#process" class="btn-large outline">Explore the Process <span class="btn-arrow">↓</span></a>
+    </div>
+  </div>
+
+  <div class="hero-scroll" id="hero-scroll">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="process-intro">
+    <span class="section-label">Our Process</span>
+    <p class="process-intro-text">
+      One conversation triggers intelligence.<br/>
+      Your data, your systems —<br/><i>unified into a single truth.</i>
+    </p>
+  </div>
+
+  <div class="process-step ps-red" id="ps1">
+    <div class="step-num">01</div>
+    <div>
+      <h3 class="step-title">Assessment,<br/><i>accelerated</i></h3>
+    </div>
+    <div>
+      <p class="step-body">We map your systems, data flows, and operational gaps in days — not months. No assumptions, no lengthy onboarding. Just a clear picture of where your intelligence is leaking and how to capture it.</p>
+      <span class="step-tag tag-red">Discovery</span>
+    </div>
+  </div>
+
+  <div class="process-step ps-orange" id="ps2">
+    <div class="step-num">02</div>
+    <div>
+      <h3 class="step-title">Structured,<br/><i>verified</i></h3>
+    </div>
+    <div>
+      <p class="step-body">We don't replace your systems. We connect them. Data pipelines are built, cleaned, and validated into a unified layer — every row verified, every source reconciled. A foundation your team can trust before acting on it.</p>
+      <span class="step-tag tag-orange">Data Layer</span>
+    </div>
+  </div>
+
+  <div class="process-step ps-gold" id="ps3">
+    <div class="step-num">03</div>
+    <div>
+      <h3 class="step-title">Visible in<br/><i>real time</i></h3>
+    </div>
+    <div>
+      <p class="step-body">Live dashboards deploy to the right people at the right level. Executives get the overview. Field teams get actionable clarity. Auditors get the full trail. Everyone sees the same truth — simultaneously.</p>
+      <span class="step-tag tag-gold">Intelligence</span>
+    </div>
+  </div>
+
+  <div class="process-step ps-blue" id="ps4">
+    <div class="step-num">04</div>
+    <div>
+      <h3 class="step-title">Confident<br/><i>decisions</i></h3>
+    </div>
+    <div>
+      <p class="step-body">Alerts fire when thresholds are crossed. Variance is flagged before it becomes leakage. Decision support surfaces exactly when your team needs it — turning operational intelligence into a genuine competitive advantage.</p>
+      <span class="step-tag tag-blue">Action</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-header">
+    <h2 class="features-title">Designed for today's<br/>operations. <i>Beyond<br/>spreadsheets.</i></h2>
+    <p class="features-sub">Five capabilities engineered for organizations that run the real economy — without replacing a single system you already rely on.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card fc-red">
+      <div class="fc-icon fc-icon-red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <h3 class="fc-title">Rapid Activation</h3>
+      <p class="fc-body">Intelligence in weeks, not quarters. Our structured pilot model delivers measurable results before you commit to scale.</p>
+    </div>
+    <div class="feature-card fc-orange">
+      <div class="fc-icon fc-icon-orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
+      <h3 class="fc-title">Deep Data Audit</h3>
+      <p class="fc-body">Every source mapped, every error surfaced. Our verification model enforces data quality before any dashboard goes live.</p>
+    </div>
+    <div class="feature-card fc-gold">
+      <div class="fc-icon fc-icon-gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#9a7010" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+        </svg>
+      </div>
+      <h3 class="fc-title">Role-Based Dashboards</h3>
+      <p class="fc-body">Each stakeholder sees exactly what they need. Executive overviews, field detail, and audit trails — one platform, zero confusion.</p>
+    </div>
+    <div class="feature-card fc-blue">
+      <div class="fc-icon fc-icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <h3 class="fc-title">Continuous Monitoring</h3>
+      <p class="fc-body">KPIs tracked around the clock. Configurable alerts fire the moment a threshold is crossed — budget, compliance, or delivery.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STANDARDS SPLIT -->
+<section id="standards">
+  <div class="standards-visual">
+    <!-- Faint M letterform as atmosphere -->
+    <svg class="std-bg-logo" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M20 240 L20 40 L140 160 L260 40 L260 240" stroke="white" stroke-width="28" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <div class="std-grid"></div>
+    <div style="position:relative;z-index:1">
+      <div class="std-color-row">
+        <div class="std-color-swatch" style="background:var(--red)"></div>
+        <div class="std-color-swatch" style="background:var(--orange)"></div>
+        <div class="std-color-swatch" style="background:var(--gold)"></div>
+        <div class="std-color-swatch" style="background:var(--blue)"></div>
+      </div>
+      <p class="std-caption">
+        <strong>Real-time operational visibility</strong>
+        Every data point verified. Every alert meaningful. Zero noise in, zero guesswork out.
+      </p>
+    </div>
+  </div>
+
+  <div class="standards-content">
+    <span class="section-label">The MonityIO Standard</span>
+    <h2 class="standards-title">Enterprise-grade<br/>standards on <i>every<br/>deployment.</i></h2>
+    <p class="standards-body">Modeled on best-practice intelligence environments, our process enforces data integrity, access controls, and compliance trails at every layer. We hold to a zero-tolerance model for unverified data reaching decision-makers.</p>
+    <a href="#cta" class="btn-large primary" style="align-self:flex-start">Explore Our Approach <span class="btn-arrow">→</span></a>
+    <div class="stat-row">
+      <div class="stat-item s-red">
+        <div class="stat-num">4–8</div>
+        <div class="stat-label">Weeks to first insight</div>
+      </div>
+      <div class="stat-item s-blue">
+        <div class="stat-num">360°</div>
+        <div class="stat-label">Operational coverage</div>
+      </div>
+      <div class="stat-item s-gold">
+        <div class="stat-num">Zero</div>
+        <div class="stat-label">Systems replaced</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="faq-header">
+    <h2 class="faq-title">How it works<br/>and how we<br/>deliver.</h2>
+    <p class="faq-note">Everything you need to know before your first conversation with us.</p>
+  </div>
+  <div id="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q">How quickly can we expect to see results?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-inner">We move at the speed of your schedule. Our structured pilot delivers the first live dashboard within 2–3 weeks of kickoff, with measurable intelligence outputs — verified KPIs, identified data gaps, and alert thresholds — within 4–8 weeks. You see real value before committing to scale.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">Do we need to replace or migrate our current systems?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-inner">Never. MonityIO is an intelligence layer, not a replacement platform. We connect to your existing systems — whether that's spreadsheets, MIS platforms, accounting tools, or paper-based registers — and structure the data flowing through them. Your teams keep using what they know. We make it work better.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">What kinds of organizations do you work with?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-inner">We work with NGOs and development organizations, government ministries, SMEs, construction and infrastructure firms, and logistics operators. We specialize in organizations with complex operational environments and multiple data sources — particularly those in emerging markets where formal intelligence infrastructure is limited.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">How do you handle data security and access control?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-inner">Every deployment includes role-based access controls, full audit trails, and secure data handling protocols. Dashboards are configured so each stakeholder sees only data relevant to their role. We treat data governance as a non-negotiable — not an add-on.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q">How does MonityIO differ from traditional reporting consultancies?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-inner">Traditional consultancies deliver a report. MonityIO delivers continuous intelligence. Where others produce a static document from a one-time data pull, we build the infrastructure for ongoing visibility — so your organization doesn't just understand what happened last quarter, but what is happening right now and what it means for the decision in front of you today.</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTORS -->
+<section id="sectors">
+  <div class="sectors-header">
+    <h2 class="sectors-title">Built for organizations<br/>that run the <i>real economy.</i></h2>
+    <p class="sectors-sub">We specialize in complex, multi-stakeholder environments where data clarity is not optional — it is operational survival.</p>
+  </div>
+  <div class="sectors-grid">
+    <div class="sector-card">
+      <div class="sector-icon">🌍</div>
+      <div class="sector-name">NGOs &amp; Development</div>
+      <div class="sector-tag">Donor compliance · Field ops</div>
+    </div>
+    <div class="sector-card">
+      <div class="sector-icon">🏛</div>
+      <div class="sector-name">Government &amp; Public Sector</div>
+      <div class="sector-tag">Social programs · Budget</div>
+    </div>
+    <div class="sector-card">
+      <div class="sector-icon">🏢</div>
+      <div class="sector-name">SMEs &amp; Enterprises</div>
+      <div class="sector-tag">Financial visibility · KPIs</div>
+    </div>
+    <div class="sector-card">
+      <div class="sector-icon">🏗</div>
+      <div class="sector-name">Construction &amp; Infrastructure</div>
+      <div class="sector-tag">Project tracking · Compliance</div>
+    </div>
+    <div class="sector-card">
+      <div class="sector-icon">🚚</div>
+      <div class="sector-name">Logistics &amp; Supply Chain</div>
+      <div class="sector-tag">Route · Inventory · Delivery</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-wash"></div>
+  <div class="cta-logo-center" id="cta-logo">
+    <img src="logo.png" alt="MonityIO"/>
+  </div>
+  <h2 class="cta-title" id="cta-title">
+    See your operations<br/><i>clearly.</i><br/>Start <span class="hl-red">now.</span>
+  </h2>
+  <div class="cta-actions" id="cta-actions">
+    <a href="mailto:hello@monityio.com" class="btn-large red-btn">Request a Pilot <span class="btn-arrow">→</span></a>
+    <a href="tel:+265999478629" class="btn-large outline">+265 999 478 629</a>
+  </div>
+  <div class="contact-note">
+    <a href="mailto:hello@monityio.com">hello@monityio.com</a>
+    <span style="color:var(--ink-faint)">·</span>
+    <span>Lilongwe, Malawi</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="logo.png" alt="MonityIO"/>
+  </div>
+  <div class="footer-links">
+    <a href="#process">Our Process</a>
+    <a href="#features">Platform</a>
+    <a href="#sectors">Industries</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:hello@monityio.com">Contact</a>
+  </div>
+  <p class="footer-copy">© 2025 MonityIO. All rights reserved.</p>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// ── CURSOR
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: .08, ease: 'none' });
+});
+document.querySelectorAll('a, button, .process-step, .feature-card, .sector-card').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+
+// ── NAV + TICKER on scroll
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 20;
+  document.getElementById('main-nav').classList.toggle('scrolled', scrolled);
+  document.getElementById('ticker-bar').classList.toggle('visible', scrolled);
+});
+
+// ── HERO ENTRANCE
+gsap.set(['#hero-eyebrow','#hero-headline','#hero-bottom','#hero-scroll'], { opacity: 0, y: 20 });
+
+const heroTl = gsap.timeline({ delay: .25 });
+heroTl
+  .to('#hero-stripe',   { opacity: 1, scaleX: 1, duration: .8, ease: 'power3.out', transformOrigin: 'left' }, 0)
+  .to('#hero-eyebrow',  { opacity: 1, y: 0, duration: .65, ease: 'power3.out' }, .2)
+  .to('#hero-headline', { opacity: 1, y: 0, duration: 1,   ease: 'power3.out' }, .35)
+  .to('#hero-bottom',   { opacity: 1, y: 0, duration: .7,  ease: 'power3.out' }, .55)
+  .to('#hero-scroll',   { opacity: 1, y: 0, duration: .5,  ease: 'power3.out' }, .75);
+
+// ── PROCESS STEPS — each slides in on scroll, num color changes at center viewport
+const psColors = { '#ps1': '--red', '#ps2': '--orange', '#ps3': '--gold', '#ps4': '--blue' };
+['#ps1','#ps2','#ps3','#ps4'].forEach((id, i) => {
+  const el = document.querySelector(id);
+  if (!el) return;
+  gsap.fromTo(el,
+    { opacity: 0, y: 22 },
+    { opacity: 1, y: 0, duration: .7, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 84%', toggleActions: 'play none none reverse' }
+    }
+  );
+  // Step number activates when in center
+  const colorVar = psColors[id];
+  ScrollTrigger.create({
+    trigger: el, start: 'top center', end: 'bottom center',
+    onEnter:     () => gsap.to(`${id} .step-num`, { color: `var(${colorVar})`, duration: .3 }),
+    onLeave:     () => gsap.to(`${id} .step-num`, { color: 'var(--ink-faint)', duration: .3 }),
+    onEnterBack: () => gsap.to(`${id} .step-num`, { color: `var(${colorVar})`, duration: .3 }),
+    onLeaveBack: () => gsap.to(`${id} .step-num`, { color: 'var(--ink-faint)', duration: .3 }),
+  });
+});
+
+// ── FEATURES
+gsap.utils.toArray('.feature-card').forEach((el, i) => {
+  gsap.fromTo(el,
+    { opacity: 0, y: 18 },
+    { opacity: 1, y: 0, duration: .55, delay: i * .09, ease: 'power2.out',
+      scrollTrigger: { trigger: '#features', start: 'top 72%', toggleActions: 'play none none reverse' }
+    }
+  );
+});
+
+// ── STANDARDS
+gsap.fromTo('.standards-visual',
+  { opacity: 0 },
+  { opacity: 1, duration: .9, ease: 'power2.out',
+    scrollTrigger: { trigger: '#standards', start: 'top 75%', toggleActions: 'play none none reverse' }
+  }
+);
+gsap.fromTo('.standards-content',
+  { opacity: 0, x: 20 },
+  { opacity: 1, x: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: '#standards', start: 'top 72%', toggleActions: 'play none none reverse' }
+  }
+);
+
+// ── STAT NUMBERS
+document.querySelectorAll('.stat-num').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el, start: 'top 88%', once: true,
+    onEnter: () => gsap.fromTo(el,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: .55, ease: 'back.out(1.5)' }
+    )
+  });
+});
+
+// ── SECTORS
+gsap.utils.toArray('.sector-card').forEach((el, i) => {
+  gsap.fromTo(el,
+    { opacity: 0, y: 14 },
+    { opacity: 1, y: 0, duration: .5, delay: i * .07, ease: 'power2.out',
+      scrollTrigger: { trigger: '#sectors', start: 'top 78%', toggleActions: 'play none none reverse' }
+    }
+  );
+});
+
+// ── CTA
+gsap.fromTo('#cta-logo',
+  { opacity: 0, y: 12 },
+  { opacity: 1, y: 0, duration: .6, ease: 'power3.out',
+    scrollTrigger: { trigger: '#cta', start: 'top 78%', toggleActions: 'play none none reverse' }
+  }
+);
+gsap.fromTo('#cta-title',
+  { opacity: 0, y: 24 },
+  { opacity: 1, y: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: '#cta', start: 'top 75%', toggleActions: 'play none none reverse' }
+  }
+);
+gsap.fromTo('#cta-actions',
+  { opacity: 0, y: 16 },
+  { opacity: 1, y: 0, duration: .6, delay: .15, ease: 'power3.out',
+    scrollTrigger: { trigger: '#cta', start: 'top 75%', toggleActions: 'play none none reverse' }
+  }
+);
+
+// ── FAQ ACCORDION
+document.querySelectorAll('.faq-item').forEach(item => {
+  const btn = item.querySelector('.faq-q');
+  const ans = item.querySelector('.faq-answer');
+  btn.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(other => {
+      other.classList.remove('open');
+      other.querySelector('.faq-answer').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      ans.style.maxHeight = ans.scrollHeight + 'px';
+    }
+  });
+});
+</script>
+</body>
+</html>
