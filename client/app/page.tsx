@@ -5,6 +5,37 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const faqs = [
+    {
+      question: "How quickly can we expect to see results?",
+      answer:
+        "Most organizations see their first live dashboard within a few weeks. Initial insights are typically delivered within 4–8 weeks depending on system complexity and data readiness.",
+    },
+    {
+      question: "Do we need to replace our current systems?",
+      answer:
+        "No. MonityIO is an intelligence layer that connects to your existing systems, spreadsheets, databases and operational tools.",
+    },
+    {
+      question: "What kinds of organizations do you work with?",
+      answer:
+        "We work with NGOs, government agencies, SMEs, construction firms, infrastructure programmes and logistics operators.",
+    },
+    {
+      question: "How do you handle security and access control?",
+      answer:
+        "Role-based permissions, audit trails and secure data handling practices are included in every deployment.",
+    },
+    {
+      question:
+        "How is MonityIO different from traditional reporting consultancies?",
+      answer:
+        "Traditional reporting explains what happened. MonityIO provides continuous visibility into what is happening now and where action is needed.",
+    },
+  ];
+
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -443,6 +474,105 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section
+        id="faq"
+        className="border-t border-[#DDD9D0] bg-[#F7F6F2]"
+      >
+        <div className="max-w-5xl mx-auto px-6 py-24">
+
+          <div className="grid lg:grid-cols-2 gap-12 mb-16">
+
+            <h2
+              className="
+                font-[family-name:var(--font-serif)]
+                text-5xl
+                leading-tight
+              "
+            >
+              How it works
+              <br />
+              and how we
+              <br />
+              deliver.
+            </h2>
+
+            <p className="text-zinc-600 leading-8">
+              Everything you need to know before your first conversation with us.
+            </p>
+
+          </div>
+
+          <div>
+
+            {faqs.map((faq, index) => (
+              <div
+                key={faq.question}
+                className="border-t border-[#DDD9D0]"
+              >
+                <button
+                  onClick={() =>
+                    setOpenFaq(openFaq === index ? null : index)
+                  }
+                  className="
+                    w-full
+                    flex
+                    justify-between
+                    items-center
+                    py-7
+                    text-left
+                  "
+                >
+                  <span className="font-medium">
+                    {faq.question}
+                  </span>
+
+                  <div
+                    className={`
+                      w-8 h-8
+                      rounded-full
+                      border
+                      flex
+                      items-center
+                      justify-center
+                      transition-all
+                      ${
+                        openFaq === index
+                          ? "bg-[#E8291C] border-[#E8291C] text-white"
+                          : "border-[#DDD9D0]"
+                      }
+                    `}
+                  >
+                    {openFaq === index ? "−" : "+"}
+                  </div>
+                </button>
+
+                <div
+                  className={`
+                    overflow-hidden
+                    transition-all
+                    duration-300
+                    ${
+                      openFaq === index
+                        ? "max-h-96 pb-8"
+                        : "max-h-0"
+                    }
+                  `}
+                >
+                  <p className="text-zinc-600 leading-8 max-w-3xl">
+                    {faq.answer}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+            <div className="border-t border-[#DDD9D0]" />
+
           </div>
 
         </div>
