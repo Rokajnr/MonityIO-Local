@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMonityAnimations } from "@/hooks/useMonityAnimations";
 
 export default function Home() {
+  useMonityAnimations();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const faqs = [
@@ -685,7 +687,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA/ Contact */}
       <section
         id="contact"
         className="bg-[#F7F6F2] border-t border-[#DDD9D0]"
