@@ -1,32 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Bricolage_Grotesque, Hanken_Grotesk } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-serif",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const bricolageGrotesque = Bricolage_Grotesque({
-  variable: "--font-bricolage-grotesque",
-  subsets: ["latin"],
-});
-
-const hankenGrotesk = Hanken_Grotesk({
-  variable: "--font-hanken-grotesk",
-  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
-  title: "MonityIO — Coming Soon",
-  description: "We build software that powers business growth.",
-  manifest: "/site.webmanifest",
+  title: "MonityIO | Operations Intelligence",
+  description:
+    "Real-time operational intelligence, monitoring, compliance, and decision support for modern organizations.",
 };
 
 export default function RootLayout({
@@ -35,9 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolageGrotesque.variable} ${hankenGrotesk.variable}`}>
+    <html
+      lang="en"
+      className={`${instrumentSerif.variable} ${inter.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
-  
 }
