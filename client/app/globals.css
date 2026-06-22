@@ -25,6 +25,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* NAV scrolled state */
+nav#main-nav {
+  transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+  border-color: transparent;
+}
+
+nav#main-nav.scrolled {
+  border-color: #DDD9D0;
+  background: rgba(247, 246, 242, 0.94);
+  backdrop-filter: blur(14px);
+}
+
 /* Cursor styles */
 #cursor {
   width: 8px;
@@ -45,6 +57,115 @@ body {
 @media (hover: none) {
   #cursor {
     display: none;
+  }
+}
+
+/* TICKER BAR */
+.ticker-bar {
+  position: fixed;
+  top: 62px;
+  left: 0;
+  right: 0;
+  z-index: 199;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  border-bottom: 1px solid #DDD9D0;
+  background: rgba(247, 246, 242, 0.94);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.ticker-bar.visible {
+  opacity: 1;
+}
+
+.ticker-track {
+  display: flex;
+  animation: ticker 30s linear infinite;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #888680;
+  padding: 0 2rem;
+}
+
+.ticker-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-red {
+  background: #E8291C;
+}
+
+.dot-blue {
+  background: #2B6CB8;
+}
+
+.dot-orange {
+  background: #E07020;
+}
+
+.dot-gold {
+  background: #F0B020;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* HERO SCROLL INDICATOR */
+.hero-scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #C5C2BB;
+  opacity: 0;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, #C5C2BB, transparent);
+  animation: scroll-drop 2.2s ease-in-out infinite;
+}
+
+@keyframes scroll-drop {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(0.4);
+    opacity: 1;
   }
 }
 

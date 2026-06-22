@@ -57,7 +57,7 @@ export default function Home() {
       />
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F6F2]/90 backdrop-blur border-b border-[#DDD9D0]">
+      <nav id="main-nav" className="fixed top-0 left-0 right-0 z-50 bg-[#F7F6F2]/90 backdrop-blur border-b border-[#DDD9D0]">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <img
             src="/logo.png"
@@ -81,8 +81,26 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* TICKER BAR */}
+      <div id="ticker-bar" className="ticker-bar">
+        <div className="ticker-track" aria-hidden="true">
+          {["Operations Intelligence", "Real-Time Monitoring", "Data Structuring", "Financial Visibility", "Decision Support", "Operational Control", "Pilot in Weeks", "Compliance Monitoring"].map((item, i) => (
+            <span key={i} className="ticker-item">
+              <span className={`ticker-dot dot-${["red", "blue", "orange", "gold"][i % 4]}`} />
+              {item}
+            </span>
+          ))}
+          {["Operations Intelligence", "Real-Time Monitoring", "Data Structuring", "Financial Visibility", "Decision Support", "Operational Control", "Pilot in Weeks", "Compliance Monitoring"].map((item, i) => (
+            <span key={`repeat-${i}`} className="ticker-item">
+              <span className={`ticker-dot dot-${["red", "blue", "orange", "gold"][i % 4]}`} />
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* HERO */}
-      <section className="min-h-screen bg-[#F7F6F2] pt-32 px-6">
+      <section className="relative min-h-screen bg-[#F7F6F2] pt-32 px-6">
         <div className="max-w-7xl mx-auto">
 
           {/* Color Stripe */}
@@ -140,6 +158,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <div id="hero-scroll" className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-xs uppercase tracking-widest text-zinc-400">
+          <span>scroll</span>
+          <div className="scroll-line w-px h-9 bg-gradient-to-b from-zinc-400 to-transparent" />
+        </div>
       </section>
 
       {/* PROCESS */}
@@ -169,64 +193,76 @@ export default function Home() {
 
           <div className="space-y-20">
 
-            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10">
-              <div className="text-7xl text-red-500">01</div>
+            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10 process-step ps-red" id="ps1">
+              <div className="text-7xl text-red-500 step-num">01</div>
 
-              <h3 className="font-[family-name:var(--font-serif)] text-3xl">
+              <h3 className="font-[family-name:var(--font-serif)] text-3xl step-title">
                 Assessment,
                 <br />
                 <i>accelerated</i>
               </h3>
 
-              <p className="text-zinc-600 leading-8">
-                We map your systems, data flows and operational gaps
-                in days rather than months.
-              </p>
+              <div>
+                <p className="text-zinc-600 leading-8 step-body">
+                  We map your systems, data flows and operational gaps
+                  in days rather than months.
+                </p>
+                <span className="inline-block mt-4 text-xs font-bold uppercase px-3 py-1 bg-red-100 text-red-700 rounded-full step-tag tag-red">Discovery</span>
+              </div>
             </div>
 
-            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10">
-              <div className="text-7xl text-orange-500">02</div>
+            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10 process-step ps-orange" id="ps2">
+              <div className="text-7xl text-orange-500 step-num">02</div>
 
-              <h3 className="font-[family-name:var(--font-serif)] text-3xl">
+              <h3 className="font-[family-name:var(--font-serif)] text-3xl step-title">
                 Structured,
                 <br />
                 <i>verified</i>
               </h3>
 
-              <p className="text-zinc-600 leading-8">
-                We connect your systems into a trusted data layer,
-                ensuring every source is validated and reconciled.
-              </p>
+              <div>
+                <p className="text-zinc-600 leading-8 step-body">
+                  We connect your systems into a trusted data layer,
+                  ensuring every source is validated and reconciled.
+                </p>
+                <span className="inline-block mt-4 text-xs font-bold uppercase px-3 py-1 bg-orange-100 text-orange-700 rounded-full step-tag tag-orange">Data Layer</span>
+              </div>
             </div>
 
-            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10">
-              <div className="text-7xl text-yellow-500">03</div>
+            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10 process-step ps-gold" id="ps3">
+              <div className="text-7xl text-yellow-500 step-num">03</div>
 
-              <h3 className="font-[family-name:var(--font-serif)] text-3xl">
+              <h3 className="font-[family-name:var(--font-serif)] text-3xl step-title">
                 Visible in
                 <br />
                 <i>real time</i>
               </h3>
 
-              <p className="text-zinc-600 leading-8">
-                Live dashboards deliver intelligence to executives,
-                field teams and auditors simultaneously.
-              </p>
+              <div>
+                <p className="text-zinc-600 leading-8 step-body">
+                  Live dashboards deliver intelligence to executives,
+                  field teams and auditors simultaneously.
+                </p>
+                <span className="inline-block mt-4 text-xs font-bold uppercase px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full step-tag tag-gold">Intelligence</span>
+              </div>
             </div>
 
-            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10">
-              <div className="text-7xl text-blue-500">04</div>
+            <div className="grid lg:grid-cols-[120px_1fr_1fr] gap-10 process-step ps-blue" id="ps4">
+              <div className="text-7xl text-blue-500 step-num">04</div>
 
-              <h3 className="font-[family-name:var(--font-serif)] text-3xl">
+              <h3 className="font-[family-name:var(--font-serif)] text-3xl step-title">
                 Confident
                 <br />
                 <i>decisions</i>
               </h3>
 
-              <p className="text-zinc-600 leading-8">
-                Thresholds, alerts and decision support help teams
-                act before problems become losses.
-              </p>
+              <div>
+                <p className="text-zinc-600 leading-8 step-body">
+                  Thresholds, alerts and decision support help teams
+                  act before problems become losses.
+                </p>
+                <span className="inline-block mt-4 text-xs font-bold uppercase px-3 py-1 bg-blue-100 text-blue-700 rounded-full step-tag tag-blue">Action</span>
+              </div>
             </div>
 
           </div>
@@ -366,16 +402,19 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 border border-[#DDD9D0]">
             {[
-              "Rapid Activation",
-              "Deep Data Audit",
-              "Role-Based Dashboards",
-              "Continuous Monitoring",
-            ].map((item) => (
+              { title: "Rapid Activation", icon: "⚡", color: "red" },
+              { title: "Deep Data Audit", icon: "🔍", color: "orange" },
+              { title: "Role-Based Dashboards", icon: "📊", color: "gold" },
+              { title: "Continuous Monitoring", icon: "📈", color: "blue" },
+            ].map((item, i) => (
               <div
-                key={item}
-                className="p-8 border-r border-[#DDD9D0] last:border-r-0"
+                key={item.title}
+                className={`p-8 border-r border-[#DDD9D0] last:border-r-0 feature-card fc-${item.color}`}
               >
-                <h3 className="font-semibold mb-3">{item}</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 text-2xl">
+                  {item.icon}
+                </div>
+                <h3 className="font-semibold mb-3">{item.title}</h3>
                 <p className="text-sm text-zinc-600 leading-7">
                   Built to provide operational visibility and
                   intelligence without replacing existing systems.
@@ -723,24 +762,64 @@ export default function Home() {
             Start <span className="text-[#E8291C]">now.</span>
           </h2>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4 cta-actions" id="cta-actions">
             <a
               href="mailto:hello@monityio.com"
-              className="bg-[#E8291C] text-white px-8 py-4 rounded-full"
+              className="bg-[#E8291C] text-white px-8 py-4 rounded-full btn-large red-btn"
             >
-              Request a Pilot
+              Request a Pilot <span className="btn-arrow">→</span>
             </a>
 
             <a
               href="tel:+265999478629"
-              className="border border-[#DDD9D0] px-8 py-4 rounded-full"
+              className="border border-[#DDD9D0] px-8 py-4 rounded-full btn-large outline"
             >
               +265 999 478 629
             </a>
           </div>
 
+          <div className="contact-note mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+            <a href="mailto:hello@monityio.com" className="text-zinc-600 hover:text-zinc-900 transition">
+              hello@monityio.com
+            </a>
+            <span className="text-zinc-400">·</span>
+            <span className="text-zinc-400">Lilongwe, Malawi</span>
+          </div>
+
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#F7F6F2] border-t border-[#DDD9D0] px-6 py-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 flex-wrap">
+          <div className="footer-logo flex items-center gap-2">
+            <img src="/logo.png" alt="MonityIO" className="h-6 w-auto" />
+            <span className="text-sm font-semibold text-[#111110]">MonityIO</span>
+          </div>
+
+          <div className="footer-links flex flex-wrap gap-6 justify-center sm:justify-start">
+            <a href="#process" className="text-xs text-zinc-600 hover:text-zinc-900 transition">
+              Our Process
+            </a>
+            <a href="#features" className="text-xs text-zinc-600 hover:text-zinc-900 transition">
+              Platform
+            </a>
+            <a href="#industries" className="text-xs text-zinc-600 hover:text-zinc-900 transition">
+              Industries
+            </a>
+            <a href="#faq" className="text-xs text-zinc-600 hover:text-zinc-900 transition">
+              FAQ
+            </a>
+            <a href="mailto:hello@monityio.com" className="text-xs text-zinc-600 hover:text-zinc-900 transition">
+              Contact
+            </a>
+          </div>
+
+          <p className="footer-copy text-xs text-zinc-400">
+            © 2026 MonityIO. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </>
   );
 }

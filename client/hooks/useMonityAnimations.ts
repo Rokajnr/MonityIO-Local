@@ -9,6 +9,15 @@ gsap.registerPlugin(ScrollTrigger);
 export function useMonityAnimations() {
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      // ── NAV + TICKER on scroll
+      window.addEventListener("scroll", () => {
+        const scrolled = window.scrollY > 20;
+        const nav = document.getElementById("main-nav");
+        const ticker = document.getElementById("ticker-bar");
+        if (nav) nav.classList.toggle("scrolled", scrolled);
+        if (ticker) ticker.classList.toggle("visible", scrolled);
+      });
+
       // ── CURSOR TRACKING ──
       const cursor = document.getElementById("cursor");
       if (cursor) {
