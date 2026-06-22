@@ -49,6 +49,13 @@ export default function Home() {
 
   return (
     <>
+      {/* Custom Cursor */}
+      <div
+        id="cursor"
+        className="fixed w-2 h-2 bg-[#111110] rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 transition-all duration-200"
+        style={{ mixBlendMode: "multiply" }}
+      />
+
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F6F2]/90 backdrop-blur border-b border-[#DDD9D0]">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
