@@ -25,7 +25,7 @@ jobs:
     environment: production
 
     steps:
-      - name: Deploy SSH
+      - name: Deploy CMS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -35,9 +35,7 @@ jobs:
           script: |
             set -eo pipefail
 
-            echo "=== Starting deployment ==="
-
-            # Load nvm (not sourced in non-interactive shells)
+            echo "=== Deploying CMS (Strapi) ==="
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -53,8 +51,6 @@ jobs:
             nvm use
             npm ci --omit=dev
 
-            # 3. Ensure swap (1 GB host can't build without spilling to swap).
-            #    Best-effort: warns and continues if there's no passwordless sudo.
             if [ "$(swapon --show=NAME --noheadings | wc -l)" -eq 0 ]; then
               if sudo -n true 2>/dev/null; then
                 if [ ! -f /swapfile ]; then
@@ -69,41 +65,60 @@ jobs:
               fi
             fi
 
-            # Let Node's heap grow into swap; lowering this re-triggers the OOM.
             export NODE_OPTIONS="--max-old-space-size=2048"
 
-            # 4. Require the runtime env files. Without server/.env Strapi
-            #    silently falls back to SQLite (DATABASE_CLIENT defaults to
-            #    'sqlite') and crashes on a read-only db -- fail loudly instead.
             if [ ! -f server/.env ]; then
               echo "::error::server/.env is missing on the host. Create it from server/.env.production.example (Strapi needs DATABASE_CLIENT=mysql)."
               exit 1
             fi
-            if [ ! -f client/.env.production ]; then
-              echo "::error::client/.env.production is missing on the host. Create it from client/.env.production.example."
-              exit 1
-            fi
 
-            # 5. Build sequentially, CMS then website (one at a time caps memory).
-            #    A failed build aborts the deploy before any process is reloaded.
             echo "=== Building CMS (Strapi server) ==="
             ( cd server && npm ci && NODE_ENV=production npm run build )
 
-            echo "=== Building Website (Next.js client) ==="
-            ( cd client && npm ci && NODE_ENV=production npm run build )
-
-            # 6. Reload under pm2 -- CMS first, website last.
-            #    Inject server/.env into the process env so the MySQL config is
-            #    applied even if pm2's cwd/dotenv resolution differs.
             echo "Reloading CMS via pm2..."
             ( set -a; . ./server/.env; set +a
               npx pm2 reload ecosystem.config.js --only monity-server --update-env \
                 || npx pm2 start ecosystem.config.js --only monity-server )
 
+            npx pm2 save
+
+            echo "=== CMS deployment completed! ==="
+
+      - name: Deploy Website
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -eo pipefail
+
+            echo "=== Deploying Website (Next.js) ==="
+
+            # Load nvm (not sourced in non-interactive shells)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.REMOTE_PATH }}
+
+            nvm use
+
+            export NODE_OPTIONS="--max-old-space-size=2048"
+
+            if [ ! -f client/.env.production ]; then
+              echo "::error::client/.env.production is missing on the host. Create it from client/.env.production.example."
+              exit 1
+            fi
+
+            echo "=== Building Website (Next.js client) ==="
+            ( cd client && npm ci && NODE_ENV=production npm run build )
+
             echo "Reloading website via pm2..."
-            npx pm2 reload ecosystem.config.js --only monity-client --update-env \
-              || npx pm2 start ecosystem.config.js --only monity-client
+            ( set -a; . ./client/.env.production; set +a
+              npx pm2 reload ecosystem.config.js --only monity-client --update-env \
+                || npx pm2 start ecosystem.config.js --only monity-client )
 
             npx pm2 save
 
-            echo "=== Deployment successfully completed! ==="
+            echo "=== Website deployment completed! ==="
