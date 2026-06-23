@@ -82,38 +82,65 @@ All outputs from both servers will be multiplexed in your terminal and color-cod
 
 ---
 
-## Docker Deployment
+## Production Deployment (nvm + pm2)
 
-To deploy the application (Next.js frontend and Strapi backend) using Docker:
+Deployment runs both apps directly on the host with **nvm** (Node version) and
+**pm2** (process manager) — no Docker. The Node version is pinned in
+[`.nvmrc`](./.nvmrc) and the processes are defined in
+[`ecosystem.config.js`](./ecosystem.config.js).
 
-### 1. Configure Production Environment Variables
+GitHub Actions (`.github/workflows/deploy-cms.yml` and `deploy-website.yml`) SSH
+into the server on each push to `main`, pull the code, build the affected app,
+and `pm2 reload` it. The steps below describe the **one-time host setup** these
+workflows assume.
 
-Copy the production environment example file to the root `.env` (or configure the equivalent variables on your host/CI environment):
+### 1. Host prerequisites
+
+- [nvm](https://github.com/nvm-sh/nvm) installed for the deploy user.
+- A running MySQL instance reachable on `127.0.0.1:3306`.
+- The repo cloned to the path referenced by the `REMOTE_PATH` GitHub secret.
+
+pm2 is **not** required globally — it is a project dependency and is invoked via
+`npx pm2` (installed by `npm ci` during deploy).
+
+### 2. Configure production environment variables
+
+Secrets live in per-app `.env` files on the host (git-ignored, never passed
+through CI). Copy the examples and fill in real values:
 
 ```bash
-cp .env.production.example .env
+cp server/.env.production.example server/.env   # Strapi auto-loads server/.env
+cp client/.env.production.example client/.env.production
 ```
 
-Ensure all database connection parameters for your running MySQL instance are populated:
+Strapi reads `server/.env` and Next.js reads `client/.env.production`
+automatically. Note that `NEXT_PUBLIC_*` values are inlined at **build** time, so
+changing them requires a rebuild (every deploy rebuilds).
 
-* `DATABASE_CLIENT`: Set to `mysql` (default in Docker)
-* `DATABASE_HOST`: Set to your MySQL host (use `host.docker.internal` if the database runs on the same Docker host machine)
-* `DATABASE_PORT`: MySQL port (typically `3306`)
-* `DATABASE_NAME`: Name of your Strapi database
-* `DATABASE_USERNAME`: Database username
-* `DATABASE_PASSWORD`: Database password
+### 3. First start
 
-Also fill in the secret keys and token salts needed for Strapi and the domain/URL variables for Next.js.
-
-### 2. Start the Services
-
-Build and run the Docker containers in the background:
+From the repo root, with the pinned Node version active:
 
 ```bash
-docker compose up -d --build
+nvm install            # reads .nvmrc
+npm ci                 # installs pm2 and root tooling
+npm ci --prefix server && npm run build --prefix server
+npm ci --prefix client && npm run build --prefix client
+
+npm run pm2:start      # pm2 start ecosystem.config.js
+npx pm2 save           # persist the process list
+npx pm2 startup        # print the command to enable pm2 on boot (run it once)
 ```
 
-This will build the images for both the frontend client and backend server, configure them, and start the containers.
+Both apps bind to `127.0.0.1` only (server `:1337`, client `:3000`); put a
+reverse proxy (nginx/Caddy) in front for TLS and public access.
+
+### Handy pm2 commands
+
+```bash
+npm run pm2:status     # process list
+npm run pm2:logs       # tail logs
+npm run pm2:reload     # reload both apps with refreshed env
+```
 
 ---
-

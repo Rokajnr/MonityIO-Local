@@ -6,7 +6,10 @@ on:
       - main
     paths:
       - 'server/**'
-      - 'docker-compose.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
+      - 'ecosystem.config.js'
       - '.github/workflows/deploy-cms.yml'
 
 concurrency:
@@ -31,29 +34,39 @@ jobs:
             set -eo pipefail
 
             echo "=== Starting CMS deployment ==="
+
+            # Load nvm (not sourced automatically in non-interactive shells)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
             cd ${{ secrets.REMOTE_PATH }}
             echo "Changed to directory ${{ secrets.REMOTE_PATH }}"
 
             # 1. Clean local state and fetch latest code to avoid conflicts
             git config --global --add safe.directory ${{ secrets.REMOTE_PATH }}
-
             echo "Fetching latest changes..."
             git fetch https://x-access-token:${{ secrets.GH_PAT }}@github.com/MonityIO/website.git main
             git reset --hard FETCH_HEAD
 
-            # 2. Rebuild server image and restart server container (waiting for health)
-            echo "Rebuilding and restarting server container (waiting for health)..."
-            if ! docker compose up -d --build server --remove-orphans --wait --wait-timeout 300; then
-              echo "::error::Deployment failed! CMS container did not become healthy."
-              echo "=== Docker Compose Status ==="
-              docker compose ps
-              echo "=== Recent Container Logs ==="
-              docker compose logs server --tail=100
-              exit 1
-            fi
+            # 2. Match Node version pinned in .nvmrc
+            echo "Selecting Node version from .nvmrc..."
+            nvm install
+            nvm use
 
-            # 3. Clean up dangling images to free disk space
-            echo "Pruning unused Docker assets..."
-            docker image prune -f
+            # 3. Install root tooling (pm2) from lockfile
+            npm ci --omit=dev
+
+            # 4. Build the Strapi backend
+            echo "Building Strapi server..."
+            cd server
+            npm ci
+            NODE_ENV=production npm run build
+            cd ..
+
+            # 5. Reload (or start) the server process under pm2
+            echo "Reloading server via pm2..."
+            npx pm2 reload ecosystem.config.js --only monity-server --update-env \
+              || npx pm2 start ecosystem.config.js --only monity-server
+            npx pm2 save
 
             echo "=== CMS Deployment successfully completed! ==="
