@@ -89,10 +89,12 @@ Deployment runs both apps directly on the host with **nvm** (Node version) and
 [`.nvmrc`](./.nvmrc) and the processes are defined in
 [`ecosystem.config.js`](./ecosystem.config.js).
 
-GitHub Actions (`.github/workflows/deploy-cms.yml` and `deploy-website.yml`) SSH
-into the server on each push to `main`, pull the code, build the affected app,
-and `pm2 reload` it. The steps below describe the **one-time host setup** these
-workflows assume.
+A single GitHub Actions workflow ([`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml))
+SSHes into the server on each push to `main`, pulls the code once, detects what
+changed, and rebuilds only the affected app(s) — **CMS first, website last**.
+One workflow with a shared `production-deploy` concurrency group means builds
+never run concurrently on the host. The steps below describe the **one-time host
+setup** the workflow assumes.
 
 ### 1. Host prerequisites
 
