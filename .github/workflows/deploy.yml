@@ -126,7 +126,7 @@ jobs:
           URL="${STRAPI_URL%/}/api/global"
           echo "Waiting for CMS at $URL ..."
           for i in $(seq 1 30); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo 000)
+            code=$(curl -sL -o /dev/null -w "%{http_code}" "$URL" || echo 000)
             echo "Attempt $i: HTTP $code"
             if [ "$code" = "200" ]; then
               echo "CMS is healthy."
