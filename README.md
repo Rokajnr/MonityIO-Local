@@ -101,6 +101,16 @@ setup** the workflow assumes.
 - [nvm](https://github.com/nvm-sh/nvm) installed for the deploy user.
 - A running MySQL instance reachable on `127.0.0.1:3306`.
 - The repo cloned to the path referenced by the `REMOTE_PATH` GitHub secret.
+- **Swap enabled.** The host has ~1 GB RAM, which is not enough to build
+  Next.js/Strapi — the build OOMs without swap. The deploy workflow tries to
+  enable a 2 GB swapfile automatically (needs passwordless sudo); otherwise set
+  it up once and persist it:
+
+  ```bash
+  sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
+  sudo mkswap /swapfile && sudo swapon /swapfile
+  echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab   # survive reboots
+  ```
 
 pm2 is **not** required globally — it is a project dependency and is invoked via
 `npx pm2` (installed by `npm ci` during deploy).

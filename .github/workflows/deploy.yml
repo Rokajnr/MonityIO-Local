@@ -37,34 +37,28 @@ jobs:
 
             echo "=== Starting deployment ==="
 
-            # Load nvm (not sourced automatically in non-interactive shells)
+            # Load nvm (not sourced in non-interactive shells)
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             cd ${{ secrets.REMOTE_PATH }}
-            echo "Changed to directory ${{ secrets.REMOTE_PATH }}"
 
             # 1. Fetch latest code, recording HEAD before/after to detect changes
             git config --global --add safe.directory ${{ secrets.REMOTE_PATH }}
             BEFORE="$(git rev-parse HEAD 2>/dev/null || echo '')"
-            echo "Fetching latest changes..."
             git fetch https://x-access-token:${{ secrets.GH_PAT }}@github.com/MonityIO/website.git main
             git reset --hard FETCH_HEAD
             AFTER="$(git rev-parse HEAD)"
 
-            # 2. Decide what to build. Shared files (root manifests, .nvmrc,
-            #    ecosystem) force a rebuild of both apps. No prior commit or a
-            #    manual run rebuilds everything to be safe.
+            # 2. Decide what to build (shared files / fresh clone -> rebuild both)
             BUILD_SERVER=false
             BUILD_CLIENT=false
             if [ -z "$BEFORE" ] || [ "$BEFORE" = "$AFTER" ]; then
-              echo "No baseline commit (or unchanged) -> building everything."
               BUILD_SERVER=true
               BUILD_CLIENT=true
             else
               CHANGED="$(git diff --name-only "$BEFORE" "$AFTER")"
-              echo "Changed files:"
-              echo "$CHANGED"
+              echo "Changed files:"; echo "$CHANGED"
               echo "$CHANGED" | grep -qE '^server/' && BUILD_SERVER=true
               echo "$CHANGED" | grep -qE '^client/' && BUILD_CLIENT=true
               if echo "$CHANGED" | grep -qE '^(package\.json|package-lock\.json|\.nvmrc|ecosystem\.config\.js)$'; then
@@ -74,25 +68,41 @@ jobs:
             fi
             echo "BUILD_SERVER=$BUILD_SERVER  BUILD_CLIENT=$BUILD_CLIENT"
 
-            # 3. Match Node version pinned in .nvmrc and install root tooling (pm2)
-            echo "Selecting Node version from .nvmrc..."
+            # 3. Match .nvmrc Node version and install root tooling (pm2)
             nvm install
             nvm use
             npm ci --omit=dev
 
-            # 4. Build everything first; a failed build aborts the deploy before
-            #    any process is reloaded, leaving the running apps untouched.
+            # 4. Ensure swap (1 GB host can't build without spilling to swap).
+            #    Best-effort: warns and continues if there's no passwordless sudo.
+            if [ "$(swapon --show=NAME --noheadings | wc -l)" -eq 0 ]; then
+              if sudo -n true 2>/dev/null; then
+                if [ ! -f /swapfile ]; then
+                  sudo fallocate -l 2G /swapfile 2>/dev/null \
+                    || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+                  sudo chmod 600 /swapfile
+                  sudo mkswap /swapfile
+                fi
+                sudo swapon /swapfile && echo "Swap enabled (2G)."
+              else
+                echo "::warning::No swap and no passwordless sudo; build may OOM. Add swap on the host (see README)."
+              fi
+            fi
+
+            # Let Node's heap grow into swap; lowering this re-triggers the OOM.
+            export NODE_OPTIONS="--max-old-space-size=2048"
+
+            # 5. Build (CMS then website); a failed build aborts before any reload
             if [ "$BUILD_SERVER" = "true" ]; then
               echo "=== Building CMS (Strapi server) ==="
               ( cd server && npm ci && NODE_ENV=production npm run build )
             fi
             if [ "$BUILD_CLIENT" = "true" ]; then
               echo "=== Building Website (Next.js client) ==="
-              echo "NEXT_PUBLIC_* vars are read from client/.env.production at build time."
               ( cd client && npm ci && NODE_ENV=production npm run build )
             fi
 
-            # 5. Reload under pm2 -- CMS first, website last.
+            # 6. Reload under pm2 -- CMS first, website last
             if [ "$BUILD_SERVER" = "true" ]; then
               echo "Reloading CMS via pm2..."
               npx pm2 reload ecosystem.config.js --only monity-server --update-env \
