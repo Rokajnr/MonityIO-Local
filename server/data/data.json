@@ -1,13 +1,29 @@
 {
   "global": {
-    "siteName": "Strapi Blog",
+    "siteName": "MonityIO",
     "defaultSeo": {
-      "metaTitle": "Page",
-      "metaDescription": "A blog made with Strapi",
+      "metaTitle": "MonityIO - Operations Intelligence Platform",
+      "metaDescription": "MonityIO transforms scattered operational data into clear, real-time intelligence so your organization acts on facts, not guesswork.",
       "shareImage": null
     },
-    "siteDescription": "A Blog made with Strapi",
-    "favicon": null
+    "siteDescription": "MonityIO transforms scattered operational data into clear, real-time intelligence so your organization acts on facts, not guesswork.",
+    "favicon": null,
+    "navbarLinks": [
+      { "text": "Process", "url": "#process" },
+      { "text": "Platform", "url": "#features" },
+      { "text": "Industries", "url": "#industries" },
+      { "text": "FAQ", "url": "#faq" }
+    ],
+    "navbarCtaText": "Request Pilot",
+    "navbarCtaLink": "#contact",
+    "footerLinks": [
+      { "text": "Our Process", "url": "#process" },
+      { "text": "Platform", "url": "#features" },
+      { "text": "Industries", "url": "#industries" },
+      { "text": "FAQ", "url": "#faq" },
+      { "text": "Contact", "url": "mailto:hello@monityio.com" }
+    ],
+    "copyrightText": "© 2026 MonityIO. All rights reserved."
   },
   "about": {
     "title": "About the strapi blog",
@@ -232,10 +248,197 @@
           "body": "## Spatiantia astra \n\nFoeda, medio silva *errandum*: onus formam munere. Mutata bibulis est auxiliare arces etiamnunc verbis virgineo Priamidas illa Thescelus, nam fit locis lucis auras. Exitus hospes gratulor ut pondere [speslimite](http://www.curas.io/figuram); quid habent, Avernales faciente de. Pervenit Ino sonabile supplex cognoscenti vires, Bacchumque errat miserarum venandi dignabere dedisti. Discrimina iuncosaque virgaque tot sine superest [fissus](http://quos.org/sitet.aspx). Non color esset potest non sumit, sed vix arserat. Nisi immo silva tantum pectusque quos pennis quisquam artus!"
         },
         {
+          "__component": "shared.rich-text",
+          "body": "## Spatiantia astra \n\nFoeda, medio silva *errandum*: onus formam munere. Mutata bibulis est auxiliare arces etiamnunc verbis virgineo Priamidas illa Thescelus, nam fit locis lucis auras. Exitus hospes gratulor ut pondere [speslimite](http://www.curas.io/figuram); quid habent, Avernales faciente de. Pervenit Ino sonabile supplex cognoscenti vires, Bacchumque errat miserarum venandi dignabere dedisti. Discrimina iuncosaque virgaque tot sine superest [fissus](http://quos.org/sitet.aspx). Non color esset potest non sumit, sed vix arserat. Nisi immo silva tantum pectusque quos pennis quisquam artus!"
+        },
+        {
           "__component": "shared.slider",
           "files": ["coffee-art.jpg", "coffee-beans.jpg"]
         }
       ]
     }
-  ]
+  ],
+  "homepage": {
+    "hero": {
+      "eyebrow": "Operations Intelligence Platform",
+      "title": "Your data,\nfinally <i>working</i>\nfor <span class=\"text-[#E8291C]\">you.</span>",
+      "description": "MonityIO transforms scattered operational data into clear, real-time intelligence so your organization acts on facts, not guesswork.",
+      "primaryCtaText": "Request a Pilot →",
+      "primaryCtaLink": "#contact",
+      "secondaryCtaText": "Explore Process ↓",
+      "secondaryCtaLink": "#process"
+    },
+    "ticker": {
+      "items": [
+        { "text": "Operations Intelligence" },
+        { "text": "Real-Time Monitoring" },
+        { "text": "Data Structuring" },
+        { "text": "Financial Visibility" },
+        { "text": "Decision Support" },
+        { "text": "Operational Control" },
+        { "text": "Pilot in Weeks" },
+        { "text": "Compliance Monitoring" }
+      ]
+    },
+    "process": {
+      "eyebrow": "Our Process",
+      "title": "One conversation triggers intelligence.\n<i>Your systems unified into a single truth.</i>",
+      "steps": [
+        {
+          "num": "01",
+          "title": "Assessment,\n<i>accelerated</i>",
+          "description": "We map your systems, data flows and operational gaps in days rather than months.",
+          "tag": "Discovery",
+          "color": "red"
+        },
+        {
+          "num": "02",
+          "title": "Structured,\n<i>verified</i>",
+          "description": "We connect your systems into a trusted data layer, ensuring every source is validated and reconciled.",
+          "tag": "Data Layer",
+          "color": "orange"
+        },
+        {
+          "num": "03",
+          "title": "Visible in\n<i>real time</i>",
+          "description": "Live dashboards deliver intelligence to executives, field teams and auditors simultaneously.",
+          "tag": "Intelligence",
+          "color": "gold"
+        },
+        {
+          "num": "04",
+          "title": "Confident\n<i>decisions</i>",
+          "description": "Thresholds, alerts and decision support help teams act before problems become losses.",
+          "tag": "Action",
+          "color": "blue"
+        }
+      ]
+    },
+    "dashboard": {
+      "eyebrow": "Real-Time Intelligence",
+      "title": "Every metric.\nEvery project.\n<i>One source of truth.</i>",
+      "description": "Track operational performance, budgets, compliance indicators, field activities, procurement, logistics and executive KPIs from a single intelligence platform.",
+      "projectsActiveCount": 128,
+      "complianceRate": "97%",
+      "uptimeRate": "99.8%",
+      "alertsCount": 12,
+      "tasksCount": 84,
+      "chartHeights": [
+        { "height": 40 },
+        { "height": 65 },
+        { "height": 55 },
+        { "height": 80 },
+        { "height": 70 },
+        { "height": 95 }
+      ]
+    },
+    "features": {
+      "title": "Designed for modern operations.",
+      "items": [
+        {
+          "title": "Rapid Activation",
+          "icon": "⚡",
+          "color": "red",
+          "description": "Built to provide operational visibility and intelligence without replacing existing systems."
+        },
+        {
+          "title": "Deep Data Audit",
+          "icon": "🔍",
+          "color": "orange",
+          "description": "Built to provide operational visibility and intelligence without replacing existing systems."
+        },
+        {
+          "title": "Role-Based Dashboards",
+          "icon": "📊",
+          "color": "gold",
+          "description": "Built to provide operational visibility and intelligence without replacing existing systems."
+        },
+        {
+          "title": "Continuous Monitoring",
+          "icon": "📈",
+          "color": "blue",
+          "description": "Built to provide operational visibility and intelligence without replacing existing systems."
+        }
+      ]
+    },
+    "standards": {
+      "eyebrow": "The MonityIO Standard",
+      "title": "Enterprise-grade standards on <i>every deployment.</i>",
+      "description": "Modeled on best-practice intelligence environments, we enforce data integrity, access control, and auditability at every layer. No unverified data reaches decision-makers.",
+      "ctaText": "Explore Our Approach →",
+      "ctaLink": "#",
+      "visualTitle": "Real-time operational visibility",
+      "visualDescription": "Every data point verified. Every alert meaningful. Zero noise in, zero guesswork out.",
+      "stats": [
+        { "value": "4–8", "label": "Weeks to first insight", "color": "red" },
+        { "value": "360°", "label": "Operational coverage", "color": "blue" },
+        { "value": "Zero", "label": "Systems replaced", "color": "yellow" }
+      ]
+    },
+    "industries": {
+      "title": "Built for organizations\nrunning the <i>real economy.</i>",
+      "description": "We specialize in complex, multi-stakeholder environments where operational visibility is not optional — it is mission critical.",
+      "sectors": [
+        {
+          "icon": "🌍",
+          "title": "NGOs & Development",
+          "tag": "Donor compliance · Field operations"
+        },
+        {
+          "icon": "🏛",
+          "title": "Government & Public Sector",
+          "tag": "Programmes · Budgets · Delivery"
+        },
+        {
+          "icon": "🏢",
+          "title": "SMEs & Enterprises",
+          "tag": "Performance · Financial visibility"
+        },
+        {
+          "icon": "🏗",
+          "title": "Construction & Infrastructure",
+          "tag": "Projects · Compliance · Progress"
+        },
+        {
+          "icon": "🚚",
+          "title": "Logistics & Supply Chain",
+          "tag": "Routes · Inventory · Deliveries"
+        }
+      ]
+    },
+    "faq": {
+      "title": "How it works\nand how we\ndeliver.",
+      "subtitle": "Everything you need to know before your first conversation with us.",
+      "faqs": [
+        {
+          "question": "How quickly can we expect to see results?",
+          "answer": "Most organizations see their first live dashboard within a few weeks. Initial insights are typically delivered within 4–8 weeks depending on system complexity and data readiness."
+        },
+        {
+          "question": "Do we need to replace our current systems?",
+          "answer": "No. MonityIO is an intelligence layer that connects to your existing systems, spreadsheets, databases and operational tools."
+        },
+        {
+          "question": "What kinds of organizations do you work with?",
+          "answer": "We work with NGOs, government agencies, SMEs, construction firms, infrastructure programmes and logistics operators."
+        },
+        {
+          "question": "How do you handle security and access control?",
+          "answer": "Role-based permissions, audit trails and secure data handling practices are included in every deployment."
+        },
+        {
+          "question": "How is MonityIO different from traditional reporting consultancies?",
+          "answer": "Traditional reporting explains what happened. MonityIO provides continuous visibility into what is happening now and where action is needed."
+        }
+      ]
+    },
+    "contact": {
+      "title": "See your operations\n<i>clearly.</i>\nStart <span class=\"text-[#E8291C]\">now.</span>",
+      "primaryCtaText": "Request a Pilot →",
+      "primaryCtaLink": "mailto:hello@monityio.com",
+      "phone": "+265 999 478 629",
+      "email": "hello@monityio.com",
+      "location": "Lilongwe, Malawi"
+    }
+  }
 }

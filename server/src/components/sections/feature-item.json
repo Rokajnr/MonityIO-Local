@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_sections_feature_items",
+  "info": {
+    "displayName": "Feature Item",
+    "icon": "gem"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "required": true
+    },
+    "color": {
+      "type": "enumeration",
+      "enum": [
+        "red",
+        "orange",
+        "gold",
+        "blue"
+      ],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -585,20 +585,62 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    copyrightText: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     defaultSeo: Schema.Attribute.Component<'shared.seo', false>;
     favicon: Schema.Attribute.Media<'images' | 'files' | 'videos'>;
+    footerLinks: Schema.Attribute.Component<'shared.link', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::global.global'
     > &
       Schema.Attribute.Private;
+    navbarCtaLink: Schema.Attribute.String;
+    navbarCtaText: Schema.Attribute.String;
+    navbarLinks: Schema.Attribute.Component<'shared.link', true>;
     publishedAt: Schema.Attribute.DateTime;
     siteDescription: Schema.Attribute.Text & Schema.Attribute.Required;
     siteName: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
+  collectionName: 'homepages';
+  info: {
+    description: 'Manage the homepage landing content';
+    displayName: 'Homepage';
+    pluralName: 'homepages';
+    singularName: 'homepage';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    contact: Schema.Attribute.Component<'sections.contact', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dashboard: Schema.Attribute.Component<'sections.dashboard', false>;
+    faq: Schema.Attribute.Component<'sections.faq', false>;
+    features: Schema.Attribute.Component<'sections.features', false>;
+    hero: Schema.Attribute.Component<'sections.hero', false>;
+    industries: Schema.Attribute.Component<'sections.industries', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::homepage.homepage'
+    > &
+      Schema.Attribute.Private;
+    process: Schema.Attribute.Component<'sections.process', false>;
+    publishedAt: Schema.Attribute.DateTime;
+    standards: Schema.Attribute.Component<'sections.standards', false>;
+    ticker: Schema.Attribute.Component<'sections.ticker', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1121,6 +1163,7 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::category.category': ApiCategoryCategory;
       'api::global.global': ApiGlobalGlobal;
+      'api::homepage.homepage': ApiHomepageHomepage;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

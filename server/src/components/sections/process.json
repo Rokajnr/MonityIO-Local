@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_processes",
+  "info": {
+    "displayName": "Process",
+    "icon": "list-ol"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.process-step"
+    }
+  }
+}

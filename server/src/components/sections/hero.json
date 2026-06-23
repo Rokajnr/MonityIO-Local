@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_sections_heroes",
+  "info": {
+    "displayName": "Hero",
+    "icon": "heading"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "primaryCtaText": {
+      "type": "string"
+    },
+    "primaryCtaLink": {
+      "type": "string"
+    },
+    "secondaryCtaText": {
+      "type": "string"
+    },
+    "secondaryCtaLink": {
+      "type": "string"
+    }
+  }
+}

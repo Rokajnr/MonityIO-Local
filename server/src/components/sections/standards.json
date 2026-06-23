@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_sections_standards",
+  "info": {
+    "displayName": "Standards",
+    "icon": "shield-alt"
+  },
+  "options": {},
+  "attributes": {
+    "visualTitle": {
+      "type": "string",
+      "required": true
+    },
+    "visualDescription": {
+      "type": "text",
+      "required": true
+    },
+    "eyebrow": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "ctaText": {
+      "type": "string"
+    },
+    "ctaLink": {
+      "type": "string"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.standard-stat"
+    }
+  }
+}

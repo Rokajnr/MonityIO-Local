@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_sectors",
+  "info": {
+    "displayName": "Sector",
+    "icon": "globe"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "tag": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

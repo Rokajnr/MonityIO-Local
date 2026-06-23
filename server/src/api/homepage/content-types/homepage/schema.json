@@ -1,0 +1,61 @@
+{
+  "kind": "singleType",
+  "collectionName": "homepages",
+  "info": {
+    "singularName": "homepage",
+    "pluralName": "homepages",
+    "displayName": "Homepage",
+    "description": "Manage the homepage landing content"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.hero"
+    },
+    "ticker": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.ticker"
+    },
+    "process": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.process"
+    },
+    "dashboard": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.dashboard"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.features"
+    },
+    "standards": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.standards"
+    },
+    "industries": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.industries"
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.faq"
+    },
+    "contact": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact"
+    }
+  }
+}

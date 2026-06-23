@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_sections_ticker_items",
+  "info": {
+    "displayName": "Ticker Item",
+    "icon": "circle"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

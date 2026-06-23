@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_sections_industries",
+  "info": {
+    "displayName": "Industries",
+    "icon": "industry"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "sectors": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.sector"
+    }
+  }
+}

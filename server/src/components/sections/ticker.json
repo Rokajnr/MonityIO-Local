@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_sections_tickers",
+  "info": {
+    "displayName": "Ticker",
+    "icon": "align-justify"
+  },
+  "options": {},
+  "attributes": {
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.ticker-item"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_sections_process_steps",
+  "info": {
+    "displayName": "Process Step",
+    "icon": "step-forward"
+  },
+  "options": {},
+  "attributes": {
+    "num": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "tag": {
+      "type": "string",
+      "required": true
+    },
+    "color": {
+      "type": "enumeration",
+      "enum": [
+        "red",
+        "orange",
+        "gold",
+        "blue"
+      ],
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_sections_dashboards",
+  "info": {
+    "displayName": "Dashboard",
+    "icon": "desktop"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "projectsActiveCount": {
+      "type": "integer"
+    },
+    "complianceRate": {
+      "type": "string"
+    },
+    "uptimeRate": {
+      "type": "string"
+    },
+    "alertsCount": {
+      "type": "integer"
+    },
+    "tasksCount": {
+      "type": "integer"
+    },
+    "chartHeights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.chart-column"
+    }
+  }
+}

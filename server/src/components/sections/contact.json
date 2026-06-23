@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_sections_contacts",
+  "info": {
+    "displayName": "Contact",
+    "icon": "phone-alt"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "text",
+      "required": true
+    },
+    "primaryCtaText": {
+      "type": "string"
+    },
+    "primaryCtaLink": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    }
+  }
+}

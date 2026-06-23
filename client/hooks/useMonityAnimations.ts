@@ -5,6 +5,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+gsap.config({ nullTargetWarn: false });
 
 export function useMonityAnimations() {
   useLayoutEffect(() => {
@@ -22,14 +23,14 @@ export function useMonityAnimations() {
       });
 
       // ── HERO ENTRANCE TIMELINE ──
-      gsap.set(["h1", ".hero-eyebrow", ".hero-bottom", ".hero-scroll"], { opacity: 0, y: 20 });
+      gsap.set(["h1", "#hero-eyebrow", "#hero-bottom", "#hero-scroll"], { opacity: 0, y: 20 });
 
       const heroTl = gsap.timeline({ delay: 0.25 });
       heroTl
         .to("h1", { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.35)
-        .to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 0.2)
-        .to(".hero-bottom", { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.55)
-        .to(".hero-scroll", { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.75);
+        .to("#hero-eyebrow", { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 0.2)
+        .to("#hero-bottom", { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.55)
+        .to("#hero-scroll", { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.75);
 
       // Color stripe
       gsap.fromTo(
@@ -52,7 +53,7 @@ export function useMonityAnimations() {
       }
 
       // ── HERO ENTRANCE TIMELINE ──
-      gsap.to(".hero-scroll", {
+      gsap.to("#hero-scroll", {
         y: 100,
         opacity: 0,
         scrollTrigger: {
@@ -64,7 +65,7 @@ export function useMonityAnimations() {
       });
 
       // ── PROCESS STEPS with enhanced animations ──
-      gsap.utils.toArray(".grid.lg\\:grid-cols-\\[120px_1fr_1fr\\] > div").forEach((el: any, i) => {
+      gsap.utils.toArray(".process-step > *").forEach((el: any, i) => {
         gsap.fromTo(
           el,
           { opacity: 0, y: 22, scale: 0.95 },
@@ -184,7 +185,7 @@ export function useMonityAnimations() {
 
       // ── CTA SECTION with entrance pop ──
       gsap.fromTo(
-        "#cta-logo, .cta-logo-center",
+        "#cta-logo",
         { opacity: 0, y: 20, scale: 0.8 },
         {
           opacity: 1,
@@ -197,7 +198,7 @@ export function useMonityAnimations() {
       );
 
       gsap.fromTo(
-        "#cta-title, .cta-title",
+        "#cta-title",
         { opacity: 0, y: 30, letterSpacing: "-0.05em" },
         {
           opacity: 1,
@@ -210,7 +211,7 @@ export function useMonityAnimations() {
       );
 
       gsap.fromTo(
-        "#cta-actions, .cta-actions",
+        "#cta-actions",
         { opacity: 0, y: 20 },
         {
           opacity: 1,
@@ -224,7 +225,7 @@ export function useMonityAnimations() {
 
       // ── DASHBOARD SECTION animations ──
       gsap.fromTo(
-        "#dashboard > div > div:first-child, #dashboard > div > div:nth-child(2)",
+        "#dashboard > div > div > div:first-child, #dashboard > div > div > div:nth-child(2)",
         { opacity: 0, x: (i) => (i === 0 ? -40 : 40), filter: "blur(8px)" },
         {
           opacity: 1,
