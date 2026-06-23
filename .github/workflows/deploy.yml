@@ -25,7 +25,49 @@ jobs:
     environment: production
 
     steps:
-      - name: Deploy CMS
+      # --- Build both apps on the runner (the 2 GB VPS cannot run the Strapi
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+
+      - name: Build CMS (Strapi server)
+        working-directory: server
+        env:
+          NODE_ENV: production
+        run: |
+          set -eo pipefail
+          npm ci
+          npm run build
+          # Strapi compiles TS + admin panel into dist/. node_modules is NOT
+          # shipped (it has the native better-sqlite3 binding) — the host
+          # installs its own production deps so natives match the host.
+
+      - name: Build Website (Next.js client)
+        working-directory: client
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: "1"
+          # Inlined into client bundles at build time — must be set here.
+          NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
+        run: |
+          set -eo pipefail
+          npm ci
+          npm run build
+          # Standalone output excludes static assets and public/ — co-locate
+          # them next to the emitted server.js.
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+
+      # --- Update source + install production deps on the host (no builds) --
+      - name: Sync source & install deps on host
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -35,56 +77,52 @@ jobs:
           script: |
             set -eo pipefail
 
-            echo "=== Deploying CMS (Strapi) ==="
+            echo "=== Syncing source on host ==="
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             cd ${{ secrets.REMOTE_PATH }}
 
-            # 1. Fetch latest code
             git config --global --add safe.directory ${{ secrets.REMOTE_PATH }}
             git fetch https://x-access-token:${{ secrets.GH_PAT }}@github.com/MonityIO/website.git main
             git reset --hard FETCH_HEAD
 
-            # 2. Match .nvmrc Node version and install root tooling (pm2)
             nvm install
             nvm use
-            npm ci --omit=dev
-
-            if [ "$(swapon --show=NAME --noheadings | wc -l)" -eq 0 ]; then
-              if sudo -n true 2>/dev/null; then
-                if [ ! -f /swapfile ]; then
-                  sudo fallocate -l 2G /swapfile 2>/dev/null \
-                    || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
-                  sudo chmod 600 /swapfile
-                  sudo mkswap /swapfile
-                fi
-                sudo swapon /swapfile && echo "Swap enabled (2G)."
-              else
-                echo "::warning::No swap and no passwordless sudo; build may OOM. Add swap on the host (see README)."
-              fi
-            fi
-
-            export NODE_OPTIONS="--max-old-space-size=2048"
 
             if [ ! -f server/.env ]; then
               echo "::error::server/.env is missing on the host. Create it from server/.env.production.example (Strapi needs DATABASE_CLIENT=mysql)."
               exit 1
             fi
+            if [ ! -f client/.env.production ]; then
+              echo "::error::client/.env.production is missing on the host. Create it from client/.env.production.example."
+              exit 1
+            fi
 
-            echo "=== Building CMS (Strapi server) ==="
-            ( cd server && npm ci && NODE_ENV=production npm run build )
+            # Root tooling (pm2) + Strapi production deps (incl. native modules
+            # built for the host). The website ships a self-contained standalone
+            # bundle, so it needs no install here.
+            echo "Installing production dependencies..."
+            npm ci --omit=dev
+            ( cd server && npm ci --omit=dev )
 
-            echo "Reloading CMS via pm2..."
-            ( set -a; . ./server/.env; set +a
-              npx pm2 reload ecosystem.config.js --only monity-server --update-env \
-                || npx pm2 start ecosystem.config.js --only monity-server )
+      - name: Ship builds to host
+        run: |
+          set -eo pipefail
+          sudo apt-get update && sudo apt-get install -y sshpass rsync
+          SSH_REMOTE="ssh -p ${{ secrets.SSH_PORT || 22 }} -o StrictHostKeyChecking=no"
 
-            npx pm2 save
+          echo "Shipping Strapi dist/..."
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -az --delete -e "$SSH_REMOTE" \
+            server/dist/ \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}/server/dist/"
 
-            echo "=== CMS deployment completed! ==="
+          echo "Shipping Next.js standalone..."
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -az --delete -e "$SSH_REMOTE" \
+            client/.next/standalone/ \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}/client/.next/standalone/"
 
-      - name: Deploy Website
+      - name: Reload services (pm2)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -94,31 +132,31 @@ jobs:
           script: |
             set -eo pipefail
 
-            echo "=== Deploying Website (Next.js) ==="
-
-            # Load nvm (not sourced in non-interactive shells)
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             cd ${{ secrets.REMOTE_PATH }}
-
             nvm use
 
-            export NODE_OPTIONS="--max-old-space-size=2048"
-
-            if [ ! -f client/.env.production ]; then
-              echo "::error::client/.env.production is missing on the host. Create it from client/.env.production.example."
+            if [ ! -d server/dist ]; then
+              echo "::error::server/dist missing — the rsync step did not deliver the CMS build."
+              exit 1
+            fi
+            if [ ! -f client/.next/standalone/server.js ]; then
+              echo "::error::client/.next/standalone/server.js missing — the rsync step did not deliver the website build."
               exit 1
             fi
 
-            echo "=== Building Website (Next.js client) ==="
-            ( cd client && npm ci && NODE_ENV=production npm run build )
+            echo "=== Reloading CMS (Strapi) ==="
+            ( set -a; . ./server/.env; set +a
+              npx pm2 reload ecosystem.config.js --only monity-server --update-env \
+                || npx pm2 start ecosystem.config.js --only monity-server )
 
-            echo "Reloading website via pm2..."
+            echo "=== Reloading Website (Next.js) ==="
             ( set -a; . ./client/.env.production; set +a
               npx pm2 reload ecosystem.config.js --only monity-client --update-env \
                 || npx pm2 start ecosystem.config.js --only monity-client )
 
             npx pm2 save
 
-            echo "=== Website deployment completed! ==="
+            echo "=== Deployment completed! ==="
