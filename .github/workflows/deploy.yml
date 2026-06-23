@@ -72,7 +72,19 @@ jobs:
             # Let Node's heap grow into swap; lowering this re-triggers the OOM.
             export NODE_OPTIONS="--max-old-space-size=2048"
 
-            # 4. Build sequentially, CMS then website (one at a time caps memory).
+            # 4. Require the runtime env files. Without server/.env Strapi
+            #    silently falls back to SQLite (DATABASE_CLIENT defaults to
+            #    'sqlite') and crashes on a read-only db -- fail loudly instead.
+            if [ ! -f server/.env ]; then
+              echo "::error::server/.env is missing on the host. Create it from server/.env.production.example (Strapi needs DATABASE_CLIENT=mysql)."
+              exit 1
+            fi
+            if [ ! -f client/.env.production ]; then
+              echo "::error::client/.env.production is missing on the host. Create it from client/.env.production.example."
+              exit 1
+            fi
+
+            # 5. Build sequentially, CMS then website (one at a time caps memory).
             #    A failed build aborts the deploy before any process is reloaded.
             echo "=== Building CMS (Strapi server) ==="
             ( cd server && npm ci && NODE_ENV=production npm run build )
@@ -80,10 +92,13 @@ jobs:
             echo "=== Building Website (Next.js client) ==="
             ( cd client && npm ci && NODE_ENV=production npm run build )
 
-            # 5. Reload under pm2 -- CMS first, website last
+            # 6. Reload under pm2 -- CMS first, website last.
+            #    Inject server/.env into the process env so the MySQL config is
+            #    applied even if pm2's cwd/dotenv resolution differs.
             echo "Reloading CMS via pm2..."
-            npx pm2 reload ecosystem.config.js --only monity-server --update-env \
-              || npx pm2 start ecosystem.config.js --only monity-server
+            ( set -a; . ./server/.env; set +a
+              npx pm2 reload ecosystem.config.js --only monity-server --update-env \
+                || npx pm2 start ecosystem.config.js --only monity-server )
 
             echo "Reloading website via pm2..."
             npx pm2 reload ecosystem.config.js --only monity-client --update-env \
