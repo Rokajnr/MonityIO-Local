@@ -40,29 +40,20 @@ jobs:
 
       - name: Build CMS (Strapi server)
         working-directory: server
-        env:
-          NODE_ENV: production
         run: |
           set -eo pipefail
           npm ci
-          npm run build
-          # Strapi compiles TS + admin panel into dist/. node_modules is NOT
-          # shipped (it has the native better-sqlite3 binding) — the host
-          # installs its own production deps so natives match the host.
+          NODE_ENV=production npm run build
 
       - name: Build Website (Next.js client)
         working-directory: client
         env:
-          NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: "1"
-          # Inlined into client bundles at build time — must be set here.
           NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
         run: |
           set -eo pipefail
           npm ci
-          npm run build
-          # Standalone output excludes static assets and public/ — co-locate
-          # them next to the emitted server.js.
+          NODE_ENV=production npm run build
           cp -r public .next/standalone/public
           cp -r .next/static .next/standalone/.next/static
 
@@ -99,9 +90,6 @@ jobs:
               exit 1
             fi
 
-            # Root tooling (pm2) + Strapi production deps (incl. native modules
-            # built for the host). The website ships a self-contained standalone
-            # bundle, so it needs no install here.
             echo "Installing production dependencies..."
             npm ci --omit=dev
             ( cd server && npm ci --omit=dev )
