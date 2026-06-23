@@ -95,20 +95,26 @@ jobs:
             ( cd server && npm ci --omit=dev )
 
       - name: Ship builds to host
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USERNAME }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+          REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
         run: |
           set -eo pipefail
           sudo apt-get update && sudo apt-get install -y sshpass rsync
-          SSH_REMOTE="ssh -p ${{ secrets.SSH_PORT || 22 }} -o StrictHostKeyChecking=no"
+          SSH_REMOTE="ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o PreferredAuthentications=password,keyboard-interactive -o PubkeyAuthentication=no"
 
           echo "Shipping Strapi dist/..."
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -az --delete -e "$SSH_REMOTE" \
+          sshpass -e rsync -az --delete -e "$SSH_REMOTE" \
             server/dist/ \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}/server/dist/"
+            "$SSH_USER@$SSH_HOST:$REMOTE_PATH/server/dist/"
 
           echo "Shipping Next.js standalone..."
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -az --delete -e "$SSH_REMOTE" \
+          sshpass -e rsync -az --delete -e "$SSH_REMOTE" \
             client/.next/standalone/ \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}/client/.next/standalone/"
+            "$SSH_USER@$SSH_HOST:$REMOTE_PATH/client/.next/standalone/"
 
       - name: Reload services (pm2)
         uses: appleboy/ssh-action@v1.2.0
