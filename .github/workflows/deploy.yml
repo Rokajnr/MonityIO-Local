@@ -19,13 +19,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    name: Deploy (CMS then Website)
+  cms:
+    name: Deploy CMS (Strapi)
     runs-on: ubuntu-latest
     environment: production
-
     steps:
-      # --- Build both apps on the runner (the 2 GB VPS cannot run the Strapi
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -34,30 +32,15 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
-          cache-dependency-path: |
-            server/package-lock.json
-            client/package-lock.json
+          cache-dependency-path: server/package-lock.json
 
-      - name: Build CMS (Strapi server)
+      - name: Build CMS
         working-directory: server
         run: |
           set -eo pipefail
           npm ci
           NODE_ENV=production npm run build
 
-      - name: Build Website (Next.js client)
-        working-directory: client
-        env:
-          NEXT_TELEMETRY_DISABLED: "1"
-          NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
-        run: |
-          set -eo pipefail
-          npm ci
-          NODE_ENV=production npm run build
-          cp -r public .next/standalone/public
-          cp -r .next/static .next/standalone/.next/static
-
-      # --- Update source + install production deps on the host (no builds) --
       - name: Sync source & install deps on host
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -67,8 +50,6 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -eo pipefail
-
-            echo "=== Syncing source on host ==="
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -90,11 +71,10 @@ jobs:
               exit 1
             fi
 
-            echo "Installing production dependencies..."
             npm ci --omit=dev
             ( cd server && npm ci --omit=dev )
 
-      - name: Ship builds to host
+      - name: Ship CMS build to host
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
           SSH_USER: ${{ secrets.SSH_USERNAME }}
@@ -105,18 +85,11 @@ jobs:
           set -eo pipefail
           sudo apt-get update && sudo apt-get install -y sshpass rsync
           SSH_REMOTE="ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o PreferredAuthentications=password,keyboard-interactive -o PubkeyAuthentication=no"
-
-          echo "Shipping Strapi dist/..."
           sshpass -e rsync -az --delete -e "$SSH_REMOTE" \
             server/dist/ \
             "$SSH_USER@$SSH_HOST:$REMOTE_PATH/server/dist/"
 
-          echo "Shipping Next.js standalone..."
-          sshpass -e rsync -az --delete -e "$SSH_REMOTE" \
-            client/.next/standalone/ \
-            "$SSH_USER@$SSH_HOST:$REMOTE_PATH/client/.next/standalone/"
-
-      - name: Reload services (pm2)
+      - name: Reload CMS (pm2)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -125,7 +98,6 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -eo pipefail
-
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -136,21 +108,102 @@ jobs:
               echo "::error::server/dist missing — the rsync step did not deliver the CMS build."
               exit 1
             fi
+
+            ( set -a; . ./server/.env; set +a
+              npx pm2 reload ecosystem.config.js --only monity-server --update-env \
+                || npx pm2 start ecosystem.config.js --only monity-server )
+            npx pm2 save
+
+      - name: Wait for CMS to be healthy
+        env:
+          STRAPI_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
+        run: |
+          set -eo pipefail
+          if [ -z "$STRAPI_URL" ]; then
+            echo "::error::NEXT_PUBLIC_STRAPI_API_URL secret is not set. The website cannot be built or health-checked without it."
+            exit 1
+          fi
+          URL="${STRAPI_URL%/}/api/global"
+          echo "Waiting for CMS at $URL ..."
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo 000)
+            echo "Attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "CMS is healthy."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::CMS did not return 200 within ~5 min (last status: $code). Aborting before the website is built so a blank page is not deployed."
+          exit 1
+
+  client:
+    name: Deploy Website (Next.js)
+    needs: cms
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      - name: Build Website
+        working-directory: client
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
+          STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
+        run: |
+          set -eo pipefail
+          npm ci
+          NODE_ENV=production npm run build
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+
+      - name: Ship Website build to host
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USERNAME }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+          REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+        run: |
+          set -eo pipefail
+          sudo apt-get update && sudo apt-get install -y sshpass rsync
+          SSH_REMOTE="ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o PreferredAuthentications=password,keyboard-interactive -o PubkeyAuthentication=no"
+          sshpass -e rsync -az --delete -e "$SSH_REMOTE" \
+            client/.next/standalone/ \
+            "$SSH_USER@$SSH_HOST:$REMOTE_PATH/client/.next/standalone/"
+
+      - name: Reload Website (pm2)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -eo pipefail
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd ${{ secrets.REMOTE_PATH }}
+            nvm use
+
             if [ ! -f client/.next/standalone/server.js ]; then
               echo "::error::client/.next/standalone/server.js missing — the rsync step did not deliver the website build."
               exit 1
             fi
 
-            echo "=== Reloading CMS (Strapi) ==="
-            ( set -a; . ./server/.env; set +a
-              npx pm2 reload ecosystem.config.js --only monity-server --update-env \
-                || npx pm2 start ecosystem.config.js --only monity-server )
-
-            echo "=== Reloading Website (Next.js) ==="
             ( set -a; . ./client/.env.production; set +a
               npx pm2 reload ecosystem.config.js --only monity-client --update-env \
                 || npx pm2 start ecosystem.config.js --only monity-client )
-
             npx pm2 save
 
             echo "=== Deployment completed! ==="
