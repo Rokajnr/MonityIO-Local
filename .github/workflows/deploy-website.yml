@@ -1,0 +1,59 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'client/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-website.yml'
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Website (Client)
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -eo pipefail
+
+            echo "=== Starting Website deployment ==="
+            cd ${{ secrets.REMOTE_PATH }}
+            echo "Changed to directory ${{ secrets.REMOTE_PATH }}"
+
+            # 1. Clean local state and fetch latest code to avoid conflicts
+            git config --global --add safe.directory ${{ secrets.REMOTE_PATH }}
+
+            echo "Fetching latest changes..."
+            git fetch https://x-access-token:${{ secrets.GH_PAT }}@github.com/MonityIO/website.git main
+            git reset --hard FETCH_HEAD
+
+            # 2. Rebuild client image and restart client container (waiting for health)
+            echo "Rebuilding and restarting client container (waiting for health)..."
+            if ! docker compose up -d --build client --remove-orphans --wait --wait-timeout 300; then
+              echo "::error::Deployment failed! Client container did not become healthy."
+              echo "=== Docker Compose Status ==="
+              docker compose ps
+              echo "=== Recent Container Logs ==="
+              docker compose logs client --tail=100
+              exit 1
+            fi
+
+            # 3. Clean up dangling images to free disk space
+            echo "Pruning unused Docker assets..."
+            docker image prune -f
+
+            echo "=== Website Deployment successfully completed! ==="

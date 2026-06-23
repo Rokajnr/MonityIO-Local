@@ -1,13 +1,21 @@
-name: Deploy
+name: Deploy CMS
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'server/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-cms.yml'
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Deploy CMS &  Website
+    name: Deploy CMS (Server)
     runs-on: ubuntu-latest
     environment: production
 
@@ -22,7 +30,7 @@ jobs:
           script: |
             set -eo pipefail
 
-            echo "=== Starting deployment ==="
+            echo "=== Starting CMS deployment ==="
             cd ${{ secrets.REMOTE_PATH }}
             echo "Changed to directory ${{ secrets.REMOTE_PATH }}"
 
@@ -33,14 +41,14 @@ jobs:
             git fetch https://x-access-token:${{ secrets.GH_PAT }}@github.com/MonityIO/website.git main
             git reset --hard FETCH_HEAD
 
-            # 2. Rebuild images from the freshly pulled source, then (re)start
-            echo "Rebuilding and restarting Docker containers (waiting for health)..."
-            if ! docker compose up -d --build --remove-orphans --wait --wait-timeout 300; then
-              echo "::error::Deployment failed! One or more containers did not become healthy."
+            # 2. Rebuild server image and restart server container (waiting for health)
+            echo "Rebuilding and restarting server container (waiting for health)..."
+            if ! docker compose up -d --build server --remove-orphans --wait --wait-timeout 300; then
+              echo "::error::Deployment failed! CMS container did not become healthy."
               echo "=== Docker Compose Status ==="
               docker compose ps
               echo "=== Recent Container Logs ==="
-              docker compose logs --tail=100
+              docker compose logs server --tail=100
               exit 1
             fi
 
@@ -48,4 +56,4 @@ jobs:
             echo "Pruning unused Docker assets..."
             docker image prune -f
 
-            echo "=== Deployment successfully completed! ==="
+            echo "=== CMS Deployment successfully completed! ==="
