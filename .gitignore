@@ -51,3 +51,4 @@ out/
 *.db-wal
 server/public/uploads/*
 !server/public/uploads/.gitkeep
+.vscode
