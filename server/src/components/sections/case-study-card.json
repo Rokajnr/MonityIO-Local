@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_sections_case_study_cards",
+  "info": {
+    "displayName": "caseStudyCard",
+    "icon": "discuss"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "categories": {
+      "type": "string"
+    },
+    "title": {
+      "type": "text"
+    },
+    "ctaText": {
+      "type": "string"
+    },
+    "ctaLink": {
+      "type": "string"
+    },
+    "accentColor": {
+      "type": "enumeration",
+      "enum": [
+        "red",
+        "orange",
+        "blue"
+      ]
+    }
+  },
+  "config": {}
+}
