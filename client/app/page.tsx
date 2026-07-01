@@ -7,6 +7,7 @@ import Dashboard from "@/components/Dashboard";
 import Features from "@/components/Features";
 import Standards from "@/components/Standards";
 import Industries from "@/components/Industries";
+import CaseStudies from "@/components/CaseStudies";
 import Faq from "@/components/Faq";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -25,6 +26,7 @@ export default function Home() {
       <Features />
       <Standards />
       <Industries />
+      <CaseStudies />
       <Faq />
       <Contact />
       <Footer />
