@@ -1,27 +1,5 @@
 import { getHomepageData } from "@/api/homepage";
-
-const COLOR_MAP = {
-  red: {
-    colorClass: "ps-red",
-    numColorClass: "text-red-500",
-    tagColorClass: "bg-red-100 text-red-700 tag-red"
-  },
-  orange: {
-    colorClass: "ps-orange",
-    numColorClass: "text-orange-500",
-    tagColorClass: "bg-orange-100 text-orange-700 tag-orange"
-  },
-  gold: {
-    colorClass: "ps-gold",
-    numColorClass: "text-yellow-500",
-    tagColorClass: "bg-yellow-100 text-yellow-700 tag-gold"
-  },
-  blue: {
-    colorClass: "ps-blue",
-    numColorClass: "text-blue-500",
-    tagColorClass: "bg-blue-100 text-blue-700 tag-blue"
-  }
-};
+import ProcessStepper from "@/components/ProcessStepper";
 
 export default async function Process() {
   const homepageData = await getHomepageData();
@@ -29,49 +7,28 @@ export default async function Process() {
 
   if (!data || !data.steps || data.steps.length === 0) return null;
 
-  const eyebrow = data.eyebrow;
-  const title = data.title || "";
-  const steps = data.steps;
+  const { eyebrow, title = "", steps } = data;
 
   return (
-    <section id="process" className="border-t border-[#DDD9D0] bg-[#F7F6F2]">
-      <div className="max-w-7xl mx-auto px-6 py-24">
-        <div className="grid lg:grid-cols-[220px_1fr] gap-12 mb-24">
-          <div className="uppercase tracking-[0.2em] text-xs text-zinc-500">
-            {eyebrow}
-          </div>
+    <section id="process" className="bg-[#F7F5F2] py-20 md:py-28">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
 
-          <h2 
-            className="font-[family-name:var(--font-serif)] text-5xl leading-tight"
+        {/* Section header — same Strapi fields as before */}
+        <div className="mb-14 md:mb-16">
+          {eyebrow && (
+            <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-4">
+              {eyebrow}
+            </p>
+          )}
+          <h2
+            className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] lg:text-[52px] leading-[1.1] tracking-tight text-[#0f1117] max-w-[640px]"
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
         </div>
 
-        <div className="space-y-20">
-          {steps.map((step, index) => {
-            const config = COLOR_MAP[step.color] || COLOR_MAP.red;
-            return (
-              <div
-                key={index}
-                className={`grid lg:grid-cols-[120px_1fr_1fr] gap-10 process-step ${config.colorClass}`}
-              >
-                <div className={`text-7xl ${config.numColorClass} step-num`}>{step.num}</div>
+        {/* Interactive stepper — client component receives steps from Strapi */}
+        <ProcessStepper steps={steps} />
 
-                <h3 
-                  className="font-[family-name:var(--font-serif)] text-3xl step-title"
-                  dangerouslySetInnerHTML={{ __html: step.title.replace(/\n/g, "<br />") }}
-                />
-
-                <div>
-                  <p className="text-zinc-600 leading-8 step-body">{step.description}</p>
-                  <span className={`inline-block mt-4 text-xs font-bold uppercase px-3 py-1 rounded-full step-tag ${config.tagColorClass}`}>
-                    {step.tag}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </section>
   );
