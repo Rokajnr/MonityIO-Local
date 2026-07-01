@@ -453,7 +453,13 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
   attributes: {
     blocks: Schema.Attribute.DynamicZone<
-      ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
+      [
+        'shared.media',
+        'shared.quote',
+        'shared.rich-text',
+        'shared.slider',
+        'sections.case-study-card',
+      ]
     >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -622,6 +628,10 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    caseStudies: Schema.Attribute.Component<'sections.case-study-card', true>;
+    caseStudiesEyebrow: Schema.Attribute.String;
+    caseStudiesTitle: Schema.Attribute.Text;
+    caseStudiesTitleHighlight: Schema.Attribute.String;
     contact: Schema.Attribute.Component<'sections.contact', false>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

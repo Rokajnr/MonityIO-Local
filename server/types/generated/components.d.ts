@@ -1,5 +1,21 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface SectionsCaseStudyCard extends Struct.ComponentSchema {
+  collectionName: 'components_sections_case_study_cards';
+  info: {
+    displayName: 'caseStudyCard';
+    icon: 'discuss';
+  };
+  attributes: {
+    accentColor: Schema.Attribute.Enumeration<['red', 'orange', 'blue']>;
+    categories: Schema.Attribute.String;
+    ctaLink: Schema.Attribute.String;
+    ctaText: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    title: Schema.Attribute.Text;
+  };
+}
+
 export interface SectionsChartColumn extends Struct.ComponentSchema {
   collectionName: 'components_sections_chart_columns';
   info: {
@@ -309,6 +325,7 @@ export interface SharedSlider extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'sections.case-study-card': SectionsCaseStudyCard;
       'sections.chart-column': SectionsChartColumn;
       'sections.contact': SectionsContact;
       'sections.dashboard': SectionsDashboard;
