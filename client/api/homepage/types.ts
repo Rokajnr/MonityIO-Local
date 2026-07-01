@@ -93,6 +93,16 @@ export interface SectorComponent {
   tag: string;
 }
 
+export interface CaseStudyCardComponent {
+  id: number;
+  image?: { url: string; alternativeText?: string };
+  categories: string;
+  title: string;
+  ctaText: string;
+  ctaLink: string;
+  accentColor: "red" | "orange" | "blue";
+}
+
 export interface IndustriesSection {
   id: number;
   title: string;
@@ -138,4 +148,8 @@ export interface Homepage {
   industries?: IndustriesSection;
   faq?: FaqSection;
   contact?: ContactSection;
+  caseStudiesEyebrow?: string;
+  caseStudiesTitle?: string;
+  caseStudiesTitleHighlight?: string;
+  caseStudies?: CaseStudyCardComponent[];
 }
