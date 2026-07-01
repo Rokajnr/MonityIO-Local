@@ -17,6 +17,9 @@ export const getHomepageData = cache(async (): Promise<Homepage | null> => {
         "populate[6]": "industries.sectors",
         "populate[7]": "faq.faqs",
         "populate[8]": "contact",
+        "populate[9]": "caseStudies",
+        "populate[10]": "caseStudies.image",
+        
       },
     });
     return res?.data ?? null;
