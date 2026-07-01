@@ -14,48 +14,62 @@
   "attributes": {
     "hero": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.hero"
+      "component": "sections.hero",
+      "repeatable": false
     },
     "ticker": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.ticker"
+      "component": "sections.ticker",
+      "repeatable": false
     },
     "process": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.process"
+      "component": "sections.process",
+      "repeatable": false
     },
     "dashboard": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.dashboard"
+      "component": "sections.dashboard",
+      "repeatable": false
     },
     "features": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.features"
+      "component": "sections.features",
+      "repeatable": false
     },
     "standards": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.standards"
+      "component": "sections.standards",
+      "repeatable": false
     },
     "industries": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.industries"
+      "component": "sections.industries",
+      "repeatable": false
     },
     "faq": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.faq"
+      "component": "sections.faq",
+      "repeatable": false
+    },
+    "caseStudies": {
+      "type": "component",
+      "component": "sections.case-study-card",
+      "repeatable": true
+    },
+    "caseStudiesEyebrow": {
+      "type": "string"
+    },
+    "caseStudiesTitle": {
+      "type": "text"
+    },
+    "caseStudiesTitleHighlight": {
+      "type": "string"
     },
     "contact": {
       "type": "component",
-      "repeatable": false,
-      "component": "sections.contact"
+      "component": "sections.contact",
+      "repeatable": false
     }
   }
 }
