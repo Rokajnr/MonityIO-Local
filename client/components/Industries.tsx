@@ -18,9 +18,7 @@ export default async function Industries() {
         <div className="flex flex-col lg:flex-row lg:justify-between gap-10 mb-16">
           <h2
             className="
-              font-[family-name:var(--font-serif)]
-              text-5xl
-              leading-tight
+              font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]
             "
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
@@ -57,8 +55,9 @@ export default async function Industries() {
 
               <h3
                 className="
-                  font-[family-name:var(--font-serif)]
-                  text-xl
+                  font-[family-name:var(--font-sans)]
+                  text-base
+                  font-semibold
                   leading-snug
                   mb-3
                 "
