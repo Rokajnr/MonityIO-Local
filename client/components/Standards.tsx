@@ -79,7 +79,7 @@ export default async function Standards() {
         )}
 
         <h2
-          className="text-4xl lg:text-5xl leading-tight font-serif mb-6"
+          className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight"
           dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
         />
 
