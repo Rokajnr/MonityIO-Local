@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter } from "next/font/google";
+// import { Instrument_Serif, Inter } from "next/font/google";
+import { Bricolage_Grotesque, Hanken_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-serif",
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${inter.variable}`}
+      className={`${bricolage.variable} ${hanken.variable} ${inter.variable}`}
     >
       <body>{children}</body>
     </html>
