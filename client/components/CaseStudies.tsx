@@ -24,10 +24,10 @@ export default async function CaseStudies() {
               </p>
             )}
             <h2 className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]">
-              {title}
+              {title}{" "}
               {titleHighlight && (
                 <span
-                  className="block italic"
+                  className="italic"
                   style={{ color: "#D42B2B" }}
                 >
                   {titleHighlight}
