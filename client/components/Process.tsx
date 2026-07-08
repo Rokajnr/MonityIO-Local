@@ -21,7 +21,7 @@ export default async function Process() {
             </p>
           )}
           <h2
-            className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] lg:text-[52px] leading-[1.1] tracking-tight text-[#0f1117] max-w-[640px]"
+            className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]"
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
         </div>
