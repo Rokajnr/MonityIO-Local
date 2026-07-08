@@ -9,16 +9,17 @@ export const getHomepageData = cache(async (): Promise<Homepage | null> => {
     const res = await fetchStrapi<StrapiResponse<Homepage>>("homepage", {
       params: {
         "populate[0]": "hero",
-        "populate[1]": "ticker.items",
-        "populate[2]": "process.steps",
-        "populate[3]": "dashboard.chartHeights",
-        "populate[4]": "features.items",
-        "populate[5]": "standards.stats",
-        "populate[6]": "industries.sectors",
-        "populate[7]": "faq.faqs",
-        "populate[8]": "contact",
-        "populate[9]": "caseStudies",
-        "populate[10]": "caseStudies.image",
+        "populate[1]": "hero.image", 
+        "populate[2]": "ticker.items",
+        "populate[3]": "process.steps",
+        "populate[4]": "dashboard.chartHeights",
+        "populate[5]": "features.items",
+        "populate[6]": "standards.stats",
+        "populate[7]": "industries.sectors",
+        "populate[8]": "faq.faqs",
+        "populate[9]": "contact",
+        "populate[10]": "caseStudies",
+        "populate[11]": "caseStudies.image",
         
       },
     });

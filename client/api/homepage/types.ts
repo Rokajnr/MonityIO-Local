@@ -7,6 +7,10 @@ export interface HeroSection {
   primaryCtaLink?: string;
   secondaryCtaText?: string;
   secondaryCtaLink?: string;
+    image?: {  
+    url: string;
+    alternativeText?: string;
+  };
 }
 
 export interface TickerItemComponent {
