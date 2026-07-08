@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 const ACCENT = {
@@ -9,6 +8,14 @@ const ACCENT = {
   orange: "#E07530",
   blue:   "#2E72B8",
 };
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+
+function resolveImageUrl(url?: string) {
+  if (!url) return undefined;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${STRAPI_URL}${url}`;
+}
 
 type Card = {
   image?: { url: string; alternativeText?: string };
@@ -38,6 +45,8 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {visible.map((card, i) => {
           const color = ACCENT[card.accentColor] ?? ACCENT.red;
+          const imageUrl = resolveImageUrl(card.image?.url);
+
           return (
             <div
               key={i}
@@ -45,12 +54,12 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
             >
               {/* Image */}
               <div className="h-[200px] bg-gray-100 relative overflow-hidden">
-                {card.image?.url ? (
-                  <Image
-                    src={card.image.url}
-                    alt={card.image.alternativeText || card.title}
-                    fill
-                    className="object-cover"
+                {imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imageUrl}
+                    alt={card.image?.alternativeText || card.title}
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200" />
