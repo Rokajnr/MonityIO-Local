@@ -131,6 +131,7 @@ export interface SectionsHero extends Struct.ComponentSchema {
   attributes: {
     description: Schema.Attribute.Text & Schema.Attribute.Required;
     eyebrow: Schema.Attribute.String & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
     primaryCtaLink: Schema.Attribute.String;
     primaryCtaText: Schema.Attribute.String;
     secondaryCtaLink: Schema.Attribute.String;
