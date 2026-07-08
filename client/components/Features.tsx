@@ -12,7 +12,7 @@ export default async function Features() {
     <section id="features" className="border-t border-[#DDD9D0] bg-[#F7F6F2]">
       <div className="max-w-7xl mx-auto px-6 py-24">
         {title && (
-          <h2 className="font-[family-name:var(--font-serif)] text-5xl mb-16">
+          <h2 className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] pd-8 mb-16">
             {title}
           </h2>
         )}
