@@ -31,14 +31,7 @@ export default async function Contact() {
 
         <h2
           id="cta-title"
-          className="
-            font-[family-name:var(--font-serif)]
-            text-[clamp(3rem,7vw,6rem)]
-            leading-none
-            tracking-tight
-            mb-12
-            cta-title
-          "
+          className="font-[family-name:var(--font-serif)] text-[42px] md:text-[54px] lg:text-[58px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] mb-12"
           dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
         />
 
