@@ -40,10 +40,23 @@ const AVATARS = [
 
 // Hardcoded stats — structural
 const STATS = [
-  { label: "Businesses served", value: "1,000+" },
+  { label: "Businesses served", value: "100+" },
   { label: "Data integrations", value: "128" },
   { label: "System uptime", value: "99%" },
 ];
+
+function getStrapiMediaUrl(url?: string) {
+  if (!url) return null;
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.replace(/\/$/, "");
+  if (!baseUrl) return url;
+
+  return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+}
 
 export default async function Hero() {
   const homepageData = await getHomepageData();
@@ -57,7 +70,10 @@ export default async function Hero() {
     primaryCtaLink,
     secondaryCtaText,
     secondaryCtaLink,
+    image,
   } = homepageData.hero;
+
+  const heroImageUrl = getStrapiMediaUrl(image?.url);
 
   return (
     <section className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-16 md:pt-14 md:pb-20">
@@ -83,7 +99,7 @@ export default async function Hero() {
 
           {/* Title from Strapi */}
           <h1
-            className="text-[42px] md:text-[54px] lg:text-[58px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] mb-5"
+            className="font-[family-name:var(--font-serif)] text-[42px] md:text-[54px] lg:text-[58px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] mb-5"
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
 
@@ -129,8 +145,16 @@ export default async function Hero() {
         {/* ── RIGHT COLUMN — fully structural ── */}
         <div className="flex-1 w-full max-w-[540px] relative">
 
-          {/* Hero image placeholder */}
-          <div className="rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] bg-gray-100 h-[380px] md:h-[440px]" />
+          {/* Hero image from Strapi */}
+          {heroImageUrl ? (
+            <img
+              src={heroImageUrl}
+              alt={image?.alternativeText || "Monity hero illustration"}
+              className="w-full h-[380px] md:h-[440px] object-cover rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+            />
+          ) : (
+            <div className="rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] bg-gray-100 h-[380px] md:h-[440px]" />
+          )}
 
           {/* Floating stat card */}
           <div className="absolute bottom-[-20px] left-[-20px] bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-gray-100 p-4 w-[220px]">
