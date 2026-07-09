@@ -1,6 +1,15 @@
 "use client";
 
 import { useState } from "react";
+// import Image from "next/image";
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337";
+
+function resolveImageUrl(url?: string) {
+  if (!url) return undefined;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${STRAPI_URL}${url}`;
+}
 
 const COLOR_MAP = {
   red:    { hex: "#D42B2B", numClass: "text-red-500",    tagClass: "bg-red-50 text-red-600",      panelBg: "#FDE8E8" },
@@ -15,6 +24,7 @@ type Step = {
   description: string;
   tag: string;
   color: keyof typeof COLOR_MAP;
+  image?: { url: string; alternativeText?: string };
 };
 
 export default function ProcessStepper({ steps }: { steps: Step[] }) {
@@ -91,9 +101,18 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
             </span>
           </div>
 
-          {/* Image placeholder — swap for <Image> once heroImage field is added */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%]">
-            <div className="w-full h-[340px] bg-white/40 rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.10)]" />
+          {/* Image */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[340px] relative">
+            {step.image?.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={resolveImageUrl(step.image.url)}
+                alt={step.image.alternativeText || step.title}
+                className="w-full h-full object-cover rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.10)]"
+              />
+            ) : (
+              <div className="w-full h-full bg-white/40 rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.10)]" />
+            )}
           </div>
 
           {/* Dot navigation */}
