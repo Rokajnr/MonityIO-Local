@@ -176,6 +176,7 @@ export interface SectionsProcessStep extends Struct.ComponentSchema {
     color: Schema.Attribute.Enumeration<['red', 'orange', 'gold', 'blue']> &
       Schema.Attribute.Required;
     description: Schema.Attribute.Text & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     num: Schema.Attribute.String & Schema.Attribute.Required;
     tag: Schema.Attribute.String & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
