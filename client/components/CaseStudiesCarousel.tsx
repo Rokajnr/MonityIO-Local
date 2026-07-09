@@ -9,7 +9,7 @@ const ACCENT = {
   blue:   "#2E72B8",
 };
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337";
 
 function resolveImageUrl(url?: string) {
   if (!url) return undefined;
