@@ -1,9 +1,9 @@
 import { getHomepageData } from "@/api/homepage";
+import Image from "next/image";
 
-// Inline SVG icons
 function AlertIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="8" x2="12" y2="12" />
       <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -13,7 +13,7 @@ function AlertIcon() {
 
 function TaskIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="9 11 12 14 22 4" />
       <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
     </svg>
@@ -22,16 +22,13 @@ function TaskIcon() {
 
 function ActivityIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
     </svg>
   );
 }
 
-// Hardcoded capability pills — structural
-const CAPABILITY_PILLS = ["Compliance", "Budgets", "Field Ops", "Logistics", "KPIs"];
-
-// Month labels for the bar chart — structural
+const CAPABILITY_PILLS = ["Compliance", "Budgets", "Field Ops", "Logistics", "Executive KPIs"];
 const MONTHS = ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export default async function Dashboard() {
@@ -55,21 +52,20 @@ export default async function Dashboard() {
   const heights = chartHeights.map((ch) => ch.height);
 
   return (
-    <section id="dashboard" className="py-20 md:py-28 bg-white">
+    <section
+      id="dashboard"
+      className="py-20 md:py-28"
+      style={{ backgroundColor: "#EAF0F8" }}
+    >
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
-        {/* Outer gradient container — structural */}
-        <div
-          className="rounded-3xl overflow-hidden flex flex-col lg:flex-row items-stretch"
-          style={{ background: "linear-gradient(135deg, #EEF3FB 0%, #F5F0EC 100%)" }}
-        >
-
-          {/* ── LEFT — text from Strapi ── */}
-          <div className="flex-1 flex flex-col justify-center px-10 py-14 md:px-14 md:py-16 max-w-[520px]">
+          {/* ── LEFT: text ── */}
+          <div className="flex-1 max-w-[460px] flex flex-col">
 
             {eyebrow && (
               <p
-                className="text-[11px] font-bold tracking-[0.18em] uppercase mb-5"
+                className="text-[11px] font-bold tracking-[0.18em] uppercase mb-6"
                 style={{ color: "#2E72B8" }}
               >
                 {eyebrow}
@@ -77,133 +73,168 @@ export default async function Dashboard() {
             )}
 
             <h2
-              className="font-[family-name:var(--font-serif)] text-[38px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] mb-6"
+              className="font-[family-name:var(--font-serif)] text-[40px] md:text-[52px] font-extrabold leading-[1.05] tracking-tight text-[#0f1117] mb-6"
               dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
             />
 
             {description && (
-              <p className="text-[15px] md:text-[16px] text-zinc-600 leading-relaxed mb-10 max-w-[400px]">
+              <p className="text-[15px] text-zinc-500 leading-relaxed mb-8 max-w-[380px]">
                 {description}
               </p>
             )}
 
-            {/* CTA — structural */}
-            <button
-              className="self-start flex items-center gap-2 px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all"
-              style={{ backgroundColor: "#D42B2B" }}
-            >
-              See It Live
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-
-            {/* Capability pills — structural */}
-            <div className="flex flex-wrap gap-2 mt-8">
+            {/* Capability pills */}
+            <div className="flex flex-wrap gap-2 mb-10">
               {CAPABILITY_PILLS.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-white/80 border border-white text-gray-500 shadow-sm"
+                  className="text-[12px] font-medium px-4 py-1.5 rounded-full text-gray-600 bg-transparent border border-gray-300"
                 >
                   {tag}
                 </span>
               ))}
             </div>
+
+            <div>
+              <button
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all"
+                style={{ backgroundColor: "#D42B2B" }}
+              >
+                See It Live
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          {/* ── RIGHT — dashboard card, values from Strapi ── */}
-          <div className="flex-1 flex items-center justify-center px-8 py-12 lg:py-14">
-            <div className="w-full max-w-[440px] bg-white rounded-2xl shadow-[0_8px_48px_rgba(0,0,0,0.10)] border border-gray-100 overflow-hidden">
+          {/* ── RIGHT: image + floating card ── */}
+          <div className="flex-[1.2] w-full">
+            <div className="relative rounded-2xl overflow-hidden" style={{ height: "520px" }}>
 
-              {/* KPI row */}
-              <div className="grid grid-cols-2 divide-x divide-gray-100 border-b border-gray-100">
-                <div className="px-6 py-5">
-                  <p className="text-[11px] text-gray-400 font-medium mb-1">Projects Active</p>
-                  <p className="text-[34px] font-extrabold text-[#0f1117] leading-none tracking-tight">
-                    {projectsActiveCount}
-                  </p>
-                </div>
-                <div className="px-6 py-5">
-                  <p className="text-[11px] text-gray-400 font-medium mb-1">Compliance</p>
-                  <p
-                    className="text-[34px] font-extrabold leading-none tracking-tight"
-                    style={{ color: "#2E72B8" }}
-                  >
-                    {complianceRate}
-                  </p>
-                </div>
-              </div>
-              {/* Bar chart */}
-              <div className="px-6 pt-5 pb-3">
-                <p className="text-[11px] text-gray-400 font-medium mb-4">Monthly Performance</p>
+              {/* Placeholder — replace with <Image> once asset is ready */}
 
-                <div className="flex items-end gap-2" style={{ height: "100px" }}>
-                  {heights.map((h, index) => (
+              <Image
+                src="/bg-image-dashboard-sec.jpg"
+                alt="MonityIO platform"
+                fill
+                className="object-cover rounded-2xl"
+              />
+
+              {/* Dashboard card overlaid at bottom */}
+              <div className="absolute bottom-5 left-5 right-5 bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] overflow-hidden">
+
+                {/* ── KPI row: stacks cleanly on mobile ── */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-0 border-b border-gray-100">
+
+                  {/* Projects active */}
+                  <div className="px-4 py-3 border-r border-gray-100">
+                    <p className="text-[10px] text-gray-400 font-medium mb-0.5">Projects Active</p>
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <p className="text-[26px] font-extrabold text-[#0f1117] leading-none">
+                        {projectsActiveCount}
+                      </p>
+                      <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                        +24% this quarter
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Compliance */}
+                  <div className="px-4 py-3 sm:border-r border-gray-100">
+                    <p className="text-[10px] text-gray-400 font-medium mb-0.5">Compliance</p>
+                    <p className="text-[26px] font-extrabold leading-none" style={{ color: "#2E72B8" }}>
+                      {complianceRate}
+                    </p>
+                  </div>
+
+                  {/* Period — hidden on smallest screens */}
+                  <div className="hidden sm:flex px-4 py-3 items-center">
+                    <button className="text-[12px] text-gray-500 font-medium flex items-center gap-1">
+                      Monthly
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* ── Chart + stats ── */}
+                <div className="flex flex-col sm:flex-row items-stretch">
+
+                  {/* Bar chart */}
+                  <div className="flex-1 px-4 pt-3 pb-2">
+                    <p className="text-[9px] font-bold tracking-[0.12em] uppercase text-gray-400 mb-2">
+                      Monthly Performance
+                    </p>
+
+                    {/* FIX: bars are direct children of fixed-height container — no nested wrapper */}
                     <div
-                      key={index}
-                      className="flex-1 rounded-t-[6px] transition-all duration-300"
-                      style={{
-                        height: `${h}%`,
-                        backgroundColor: index === heights.length - 1 ? "#D42B2B" : "#F4B5B5",
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Month labels row — separate from bars */}
-                <div className="flex gap-2 mt-1">
-                  {heights.map((_, index) => (
-                    <span
-                      key={index}
-                      className="flex-1 text-center text-[10px] text-gray-400"
+                      className="flex items-end gap-1.5"
+                      style={{ height: "52px" }}
                     >
-                      {MONTHS[index % MONTHS.length]}
-                    </span>
-                  ))}
+                      {heights.map((h, index) => (
+                        <div
+                          key={index}
+                          className="flex-1 rounded-t-[3px]"
+                          style={{
+                            height: `${h}%`,
+                            backgroundColor:
+                              index === heights.length - 1 ? "#D42B2B" : "#F4B5B5",
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Month labels — separate row */}
+                    <div className="flex gap-1.5 mt-1">
+                      {heights.map((_, index) => (
+                        <span
+                          key={index}
+                          className="flex-1 text-center text-[9px] text-gray-400"
+                        >
+                          {MONTHS[index % MONTHS.length]}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Divider — horizontal on mobile, vertical on sm+ */}
+                  <div className="h-px sm:h-auto sm:w-px bg-gray-100 mx-4 sm:mx-0 sm:my-3" />
+
+                  {/* Stats column */}
+                  <div className="flex flex-row sm:flex-col justify-around sm:justify-center gap-2 px-4 py-3 sm:min-w-[100px]">
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: "#D42B2B" }}><AlertIcon /></span>
+                      <div>
+                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#D42B2B" }}>
+                          {alertsCount}
+                        </p>
+                        <p className="text-[9px] text-gray-400">Alerts</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: "#E07530" }}><TaskIcon /></span>
+                      <div>
+                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#E07530" }}>
+                          {tasksCount}
+                        </p>
+                        <p className="text-[9px] text-gray-400">Tasks</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: "#2E72B8" }}><ActivityIcon /></span>
+                      <div>
+                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#2E72B8" }}>
+                          {uptimeRate}
+                        </p>
+                        <p className="text-[9px] text-gray-400">Uptime</p>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-              {/* Bottom stat row */}
-              <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100">
-                <div className="flex flex-col items-center py-4 gap-1">
-                  <span style={{ color: "#D42B2B" }}>
-                    <AlertIcon />
-                  </span>
-                  <p
-                    className="text-[22px] font-extrabold leading-none"
-                    style={{ color: "#D42B2B" }}
-                  >
-                    {alertsCount}
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">Alerts</p>
-                </div>
-
-                <div className="flex flex-col items-center py-4 gap-1">
-                  <span style={{ color: "#E07530" }}>
-                    <TaskIcon />
-                  </span>
-                  <p
-                    className="text-[22px] font-extrabold leading-none"
-                    style={{ color: "#E07530" }}
-                  >
-                    {tasksCount}
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">Tasks</p>
-                </div>
-
-                <div className="flex flex-col items-center py-4 gap-1">
-                  <span style={{ color: "#2E72B8" }}>
-                    <ActivityIcon />
-                  </span>
-                  <p
-                    className="text-[22px] font-extrabold leading-none"
-                    style={{ color: "#2E72B8" }}
-                  >
-                    {uptimeRate}
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">Uptime</p>
-                </div>
-              </div>
-
             </div>
           </div>
 
