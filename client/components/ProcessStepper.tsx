@@ -94,7 +94,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
           />
 
           {/* Tag label */}
-          <div className="absolute top-6 left-6 flex items-center gap-2">
+          <div className="absolute top-6 left-6 flex items-center gap-2 z-10">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: config.hex }} />
             <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-gray-500">
               {step.tag}
@@ -102,9 +102,8 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
           </div>
 
           {/* Image */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[340px] relative">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[340px] z-0">
             {step.image?.url ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={resolveImageUrl(step.image.url)}
                 alt={step.image.alternativeText || step.title}
