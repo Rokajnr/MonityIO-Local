@@ -84,10 +84,10 @@ export default async function Hero() {
           <div className="flex-1 bg-[#F0B020]" />
           <div className="flex-1 bg-[#2B6CB8]" />
         </div>
-      <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+      <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
 
         {/* ── LEFT COLUMN ── */}
-        <div className="flex-1 max-w-[560px]">
+        <div className="flex-1 max-w-[560px] lg:order-last">
 
 
           {/* Eyebrow from Strapi */}
@@ -115,7 +115,7 @@ export default async function Hero() {
             {primaryCtaLink && primaryCtaText && (
               <Link
                 href={primaryCtaLink}
-                className="inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(212,43,43,0.25)] transition hover:opacity-90 active:scale-[0.98] sm:w-auto"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(212,43,43,0.25)] transition hover:opacity-90 active:scale-[0.98]"
                 style={{ backgroundColor: "#D42B2B" }}
               >
                 {primaryCtaText}
@@ -124,7 +124,7 @@ export default async function Hero() {
             {secondaryCtaLink && secondaryCtaText && (
               <Link
                 href={secondaryCtaLink}
-                className="inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-[#0f1117] border border-gray-200 hover:bg-gray-50 transition-colors sm:w-auto"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-[#0f1117] border border-gray-200 hover:bg-gray-50 transition-colors"
               >
                 {secondaryCtaText}
               </Link>
