@@ -1,5 +1,5 @@
 import { getHomepageData } from "@/api/homepage";
-// import Image from "next/image";
+import Image from "next/image";
 
 function AlertIcon() {
   return (
@@ -112,15 +112,15 @@ export default async function Dashboard() {
           <div className="flex-[1.2] w-full">
             <div className="relative rounded-2xl overflow-hidden" style={{ height: "520px" }}>
 
-              {/* Placeholder — replace with <Image> once asset is ready */}
-              <div className="w-full h-full bg-gray-300 rounded-2xl" />
+              {/* Placeholder — replace with <Image> once asset is ready
+              <div className="w-full h-full bg-gray-300 rounded-2xl" /> */}
 
-              {/* <Image
-                src="/bg-image-dashboard-sec.jpg"
+              <Image
+                src="/bg-image-dashboard-sec-2.jpg"
                 alt="MonityIO platform"
                 fill
                 className="object-cover rounded-2xl"
-              /> */}
+              />
 
               {/* Dashboard card overlaid at bottom */}
               <div className="absolute bottom-5 left-5 right-5 bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] overflow-hidden">
