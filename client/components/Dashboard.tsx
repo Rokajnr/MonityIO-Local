@@ -29,7 +29,20 @@ function ActivityIcon() {
 }
 
 const CAPABILITY_PILLS = ["Compliance", "Budgets", "Field Ops", "Logistics", "Executive KPIs"];
+const PILL_STYLE: Record<string, { bg: string; text: string }> = {
+  Compliance:       { bg: "#EAF0F8", text: "#2E72B8" },
+  Budgets:          { bg: "#FCE8E8", text: "#D42B2B" },
+  "Field Ops":      { bg: "#FFF4E8", text: "#E07530" },
+  Logistics:        { bg: "#FEF3C7", text: "#F0B820" },
+  "Executive KPIs": { bg: "#EFF6FF", text: "#2E72B8" },
+};
 const MONTHS = ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const STATS = [
+  { icon: <AlertIcon />,   label: "Alerts", color: "#D42B2B", key: "alerts" },
+  { icon: <TaskIcon />,    label: "Tasks",  color: "#E07530", key: "tasks"  },
+  { icon: <ActivityIcon />, label: "Uptime", color: "#2E72B8", key: "uptime" },
+];
 
 export default async function Dashboard() {
   const homepageData = await getHomepageData();
@@ -51,6 +64,12 @@ export default async function Dashboard() {
 
   const heights = chartHeights.map((ch) => ch.height);
 
+  const statValues: Record<string, string | number | undefined> = {
+    alerts: alertsCount,
+    tasks:  tasksCount,
+    uptime: uptimeRate,
+  };
+
   return (
     <section
       id="dashboard"
@@ -58,16 +77,13 @@ export default async function Dashboard() {
       style={{ backgroundColor: "#EAF0F8" }}
     >
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
 
-          {/* ── LEFT: text ── */}
-          <div className="flex-1 max-w-[460px] flex flex-col">
+          {/* ── LEFT: text — unchanged ── */}
+          <div className="flex-1 max-w-[460px] flex flex-col lg:pt-6">
 
             {eyebrow && (
-              <p
-                className="text-[11px] font-bold tracking-[0.18em] uppercase mb-6"
-                style={{ color: "#2E72B8" }}
-              >
+              <p className="text-[11px] font-bold tracking-[0.18em] uppercase mb-6" style={{ color: "#2E72B8" }}>
                 {eyebrow}
               </p>
             )}
@@ -83,16 +99,19 @@ export default async function Dashboard() {
               </p>
             )}
 
-            {/* Capability pills */}
             <div className="flex flex-wrap gap-2 mb-10">
-              {CAPABILITY_PILLS.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[12px] font-medium px-4 py-1.5 rounded-full text-gray-600 bg-transparent border border-gray-300"
-                >
-                  {tag}
-                </span>
-              ))}
+              {CAPABILITY_PILLS.map((tag) => {
+                const style = PILL_STYLE[tag] ?? { bg: "#F3F4F6", text: "#334155" };
+                return (
+                  <span
+                    key={tag}
+                    className="text-[12px] font-medium px-4 py-1.5 rounded-full"
+                    style={{ backgroundColor: style.bg, color: style.text }}
+                  >
+                    {tag}
+                  </span>
+                );
+              })}
             </div>
 
             <div>
@@ -106,138 +125,122 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* ── RIGHT: image + floating card ── */}
-          <div className="flex-[1.2] w-full">
-            <div className="relative rounded-2xl overflow-hidden" style={{ height: "520px" }}>
+          {/* ── RIGHT: tall image + overlapping card ── */}
+          <div className="flex-1 w-full relative">
 
-              {/* Placeholder — replace with <Image> once asset is ready
-              <div className="w-full h-full bg-gray-300 rounded-2xl" /> */}
-
+            {/* Tall image */}
+            <div className="relative rounded-3xl overflow-hidden w-full" style={{ height: "520px" }}>
               <Image
                 src="/bg-image-dashboard-sec-2.jpg"
-                alt="MonityIO platform"
+                alt="MonityIO platform in use"
                 fill
-                className="object-cover rounded-2xl"
+                className="object-cover"
               />
+              {/* Vignette so card reads cleanly over the image */}
+              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/30 to-transparent pointer-events-none rounded-b-3xl" />
+            </div>
 
-              {/* Dashboard card overlaid at bottom */}
-              <div className="absolute bottom-5 left-5 right-5 bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] overflow-hidden">
+            {/* Floating dashboard card — overlaps bottom of image */}
+            <div
+              className="absolute bg-white rounded-2xl shadow-[0_16px_64px_rgba(0,0,0,0.14)] border border-gray-100 overflow-hidden z-20"
+              style={{
+                left: "-24px",
+                right: "0px",
+                bottom: "-56px",
+              }}
+            >
 
-                {/* ── KPI row: stacks cleanly on mobile ── */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-0 border-b border-gray-100">
+              {/* ── Top KPI row — single flex row matching screenshot ── */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-wrap gap-3">
 
-                  {/* Projects active */}
-                  <div className="px-4 py-3 border-r border-gray-100">
-                    <p className="text-[10px] text-gray-400 font-medium mb-0.5">Projects Active</p>
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <p className="text-[26px] font-extrabold text-[#0f1117] leading-none">
-                        {projectsActiveCount}
-                      </p>
-                      <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                        +24% this quarter
+                {/* Left: projects active */}
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-[26px] font-extrabold text-[#0f1117] leading-none">
+                    {projectsActiveCount}
+                  </span>
+                  <span className="text-[13px] text-gray-400 font-medium">Projects Active</span>
+                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full whitespace-nowrap">
+                    +24% this quarter
+                  </span>
+                </div>
+
+                {/* Right: compliance + period toggle */}
+                <div className="flex items-center gap-3">
+                  <span className="text-[13px] text-gray-400">Compliance</span>
+                  <span className="text-[20px] font-extrabold leading-none" style={{ color: "#2E72B8" }}>
+                    {complianceRate}
+                  </span>
+                  <button className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 flex items-center gap-1">
+                    Monthly
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* ── Bottom: bar chart + stats column ── */}
+              <div className="flex items-stretch divide-x divide-gray-100">
+
+                {/* Bar chart */}
+                <div className="flex-1 px-5 pt-4 pb-3">
+                  <p className="text-[9px] font-bold tracking-[0.12em] uppercase text-gray-400 mb-3">
+                    Monthly Performance
+                  </p>
+
+                  {/* Bars — direct children of fixed-height container */}
+                  <div className="flex items-end gap-2" style={{ height: "60px" }}>
+                    {heights.map((h, index) => (
+                      <div
+                        key={index}
+                        className="w-5 rounded-t-[4px] flex-shrink-0"
+                        style={{
+                          height: `${h}%`,
+                          backgroundColor: index === heights.length - 1 ? "#D42B2B" : "#F4B5B5",
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Month labels */}
+                  <div className="flex gap-2 mt-1.5">
+                    {heights.map((_, index) => (
+                      <span key={index} className="w-5 flex-shrink-0 text-center text-[9px] text-gray-400">
+                        {MONTHS[index % MONTHS.length]}
                       </span>
-                    </div>
-                  </div>
-
-                  {/* Compliance */}
-                  <div className="px-4 py-3 sm:border-r border-gray-100">
-                    <p className="text-[10px] text-gray-400 font-medium mb-0.5">Compliance</p>
-                    <p className="text-[26px] font-extrabold leading-none" style={{ color: "#2E72B8" }}>
-                      {complianceRate}
-                    </p>
-                  </div>
-
-                  {/* Period — hidden on smallest screens */}
-                  <div className="hidden sm:flex px-4 py-3 items-center">
-                    <button className="text-[12px] text-gray-500 font-medium flex items-center gap-1">
-                      Monthly
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* ── Chart + stats ── */}
-                <div className="flex flex-col sm:flex-row items-stretch">
-
-                  {/* Bar chart */}
-                  <div className="flex-1 px-4 pt-3 pb-2">
-                    <p className="text-[9px] font-bold tracking-[0.12em] uppercase text-gray-400 mb-2">
-                      Monthly Performance
-                    </p>
-
-                    {/* FIX: bars are direct children of fixed-height container — no nested wrapper */}
-                    <div
-                      className="flex items-end gap-1.5"
-                      style={{ height: "52px" }}
-                    >
-                      {heights.map((h, index) => (
-                        <div
-                          key={index}
-                          className="flex-1 rounded-t-[3px]"
-                          style={{
-                            height: `${h}%`,
-                            backgroundColor:
-                              index === heights.length - 1 ? "#D42B2B" : "#F4B5B5",
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Month labels — separate row */}
-                    <div className="flex gap-1.5 mt-1">
-                      {heights.map((_, index) => (
-                        <span
-                          key={index}
-                          className="flex-1 text-center text-[9px] text-gray-400"
-                        >
-                          {MONTHS[index % MONTHS.length]}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Divider — horizontal on mobile, vertical on sm+ */}
-                  <div className="h-px sm:h-auto sm:w-px bg-gray-100 mx-4 sm:mx-0 sm:my-3" />
-
-                  {/* Stats column */}
-                  <div className="flex flex-row sm:flex-col justify-around sm:justify-center gap-2 px-4 py-3 sm:min-w-[100px]">
-                    <div className="flex items-center gap-2">
-                      <span style={{ color: "#D42B2B" }}><AlertIcon /></span>
+                {/* Stats column — with colored icon backgrounds matching screenshot */}
+                <div className="flex flex-col divide-y divide-gray-100 min-w-[140px]">
+                  {STATS.map(({ icon, label, color, key }) => (
+                    <div key={label} className="flex items-center gap-3 px-5 py-3 flex-1">
+                      {/* Colored icon background */}
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: `${color}18`, color }}
+                      >
+                        {icon}
+                      </div>
                       <div>
-                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#D42B2B" }}>
-                          {alertsCount}
+                        <p className="text-[15px] font-extrabold leading-none" style={{ color }}>
+                          {statValues[key]}
                         </p>
-                        <p className="text-[9px] text-gray-400">Alerts</p>
+                        <p className="text-[9px] text-gray-400 font-medium mt-0.5">{label}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span style={{ color: "#E07530" }}><TaskIcon /></span>
-                      <div>
-                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#E07530" }}>
-                          {tasksCount}
-                        </p>
-                        <p className="text-[9px] text-gray-400">Tasks</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span style={{ color: "#2E72B8" }}><ActivityIcon /></span>
-                      <div>
-                        <p className="text-[15px] font-extrabold leading-none" style={{ color: "#2E72B8" }}>
-                          {uptimeRate}
-                        </p>
-                        <p className="text-[9px] text-gray-400">Uptime</p>
-                      </div>
-                    </div>
-                  </div>
-
+                  ))}
                 </div>
+
               </div>
             </div>
           </div>
 
         </div>
+
+        {/* Spacer for overflowing card */}
+        <div className="h-20 md:h-24" />
       </div>
     </section>
   );
