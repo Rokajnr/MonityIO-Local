@@ -14,7 +14,7 @@ export default async function Process() {
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
 
         {/* Section header — same Strapi fields as before */}
-        <div className="mb-14 md:mb-16">
+        <div className="mb-12 md:mb-14">
           {eyebrow && (
             <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-4">
               {eyebrow}

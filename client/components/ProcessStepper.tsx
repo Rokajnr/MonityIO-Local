@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// import Image from "next/image";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337";
 
@@ -12,10 +11,10 @@ function resolveImageUrl(url?: string) {
 }
 
 const COLOR_MAP = {
-  red:    { hex: "#D42B2B", numClass: "text-red-500",    tagClass: "bg-red-50 text-red-600",      panelBg: "#FDE8E8" },
-  orange: { hex: "#E07530", numClass: "text-orange-500", tagClass: "bg-orange-50 text-orange-600", panelBg: "#FEF0E6" },
-  gold:   { hex: "#F0B820", numClass: "text-yellow-500", tagClass: "bg-yellow-50 text-yellow-700", panelBg: "#FEF9E7" },
-  blue:   { hex: "#2E72B8", numClass: "text-blue-500",   tagClass: "bg-blue-50 text-blue-600",     panelBg: "#E8F0FA" },
+  red:    { hex: "#D42B2B", tagClass: "bg-red-50 text-red-600" },
+  orange: { hex: "#E07530", tagClass: "bg-orange-50 text-orange-600" },
+  gold:   { hex: "#F0B820", tagClass: "bg-yellow-50 text-yellow-700" },
+  blue:   { hex: "#2E72B8", tagClass: "bg-blue-50 text-blue-600" },
 };
 
 type Step = {
@@ -27,139 +26,184 @@ type Step = {
   image?: { url: string; alternativeText?: string };
 };
 
+function ChevronLeftIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
 export default function ProcessStepper({ steps }: { steps: Step[] }) {
   const [activeStep, setActiveStep] = useState(0);
   const step = steps[activeStep];
   const config = COLOR_MAP[step.color] ?? COLOR_MAP.red;
+  const total = steps.length;
+  const route = step.tag ? `/${step.tag.toLowerCase().replace(/\s+/g, "-")}` : `/stage-${step.num}`;
+
+  const goPrev = () => setActiveStep((p) => Math.max(0, p - 1));
+  const goNext = () => setActiveStep((p) => Math.min(total - 1, p + 1));
 
   return (
-    <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
-
-      {/* ── LEFT: step list ── */}
-      <div className="flex-1 flex flex-col gap-2">
+    <div>
+      {/* ── Signal rail — the progress line literally fills as stages complete ── */}
+      <div className="relative flex items-center mb-16 md:mb-20 pb-8">
         {steps.map((s, i) => {
-          const isActive = i === activeStep;
           const c = COLOR_MAP[s.color] ?? COLOR_MAP.red;
+          const isActive = i === activeStep;
+          const isDone = i < activeStep;
+
           return (
-            <button
-              key={s.num}
-              onClick={() => setActiveStep(i)}
-              className={`text-left w-full rounded-2xl transition-all duration-300 ${
-                isActive
-                  ? "bg-white shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-gray-100 p-6"
-                  : "px-6 py-5 hover:bg-white/60"
-              }`}
-            >
-              <div className="flex items-start gap-5">
+            <div key={s.num} className="flex items-center flex-1 last:flex-none">
+              <button
+                onClick={() => setActiveStep(i)}
+                aria-current={isActive ? "step" : undefined}
+                aria-label={`${s.tag} — stage ${i + 1} of ${total}`}
+                className="relative flex-shrink-0 flex items-center justify-center rounded-full font-bold tabular-nums transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={
+                  {
+                    width: isActive ? 56 : 44,
+                    height: isActive ? 56 : 44,
+                    fontSize: isActive ? 16 : 14,
+                    backgroundColor: isActive ? c.hex : "#ffffff",
+                    color: isActive ? "#ffffff" : isDone ? c.hex : "#c1c5cd",
+                    border: `2px solid ${isActive || isDone ? c.hex : "#e5e7eb"}`,
+                    boxShadow: isActive ? `0 6px 20px ${c.hex}40` : "none",
+                    "--tw-ring-color": c.hex,
+                  } as React.CSSProperties
+                }
+              >
+                {s.num}
                 <span
-                  className="text-[38px] md:text-[44px] font-extrabold leading-none flex-shrink-0 tabular-nums transition-colors duration-300"
-                  style={{ color: isActive ? c.hex : "#d1d5db" }}
+                  className={`absolute top-full mt-3 text-[10px] font-bold uppercase tracking-[0.12em] whitespace-nowrap hidden sm:block transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{ color: c.hex }}
                 >
-                  {s.num}
+                  {s.tag}
                 </span>
-                <div className="pt-1">
-                  <h3
-                    className={`font-[family-name:var(--font-serif)] text-[18px] md:text-[20px] leading-tight mb-1 transition-colors duration-300 ${
-                      isActive ? "text-[#0f1117]" : "text-gray-400"
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: s.title.replace(/\n/g, "<br />") }}
+              </button>
+
+              {i < total - 1 && (
+                <div className="flex-1 h-[2px] mx-2 md:mx-4 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 motion-reduce:transition-none"
+                    style={{
+                      width: isDone ? "100%" : "0%",
+                      backgroundColor: c.hex,
+                    }}
                   />
-                  {isActive && (
-                    <>
-                      <p className="text-[14px] text-zinc-600 leading-relaxed mt-2 mb-3 max-w-[380px]">
-                        {s.description}
-                      </p>
-                      <span className={`inline-block text-[10px] font-bold tracking-[0.14em] uppercase px-3 py-1.5 rounded-full ${c.tagClass}`}>
-                        {s.tag}
-                      </span>
-                    </>
-                  )}
                 </div>
-              </div>
-            </button>
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* ── RIGHT: visual panel ── */}
-      <div className="flex-1 w-full max-w-[520px] lg:sticky lg:top-10">
-        <div
-          className="rounded-3xl overflow-hidden relative"
-          style={{ backgroundColor: config.panelBg, minHeight: "480px" }}
-        >
-          {/* Corner accent */}
+      {/* ── Content: active stage detail + device-chrome preview ── */}
+      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+        {/* Text */}
+        <div>
+          <div className="flex items-center gap-3 mb-5">
+            <span
+              className="text-[11px] font-bold tracking-[0.14em] tabular-nums"
+              style={{ color: config.hex, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+            >
+              STAGE {step.num} / {String(total).padStart(2, "0")}
+            </span>
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          <h3
+            className="font-[family-name:var(--font-serif)] text-[30px] md:text-[38px] font-extrabold leading-[1.15] tracking-tight text-[#0f1117] mb-4"
+            dangerouslySetInnerHTML={{ __html: step.title.replace(/\n/g, "<br />") }}
+          />
+
+          <p className="text-[15px] text-zinc-600 leading-relaxed max-w-[420px] mb-6">
+            {step.description}
+          </p>
+
+          <span
+            className={`inline-block text-[10px] font-bold tracking-[0.14em] uppercase px-3 py-1.5 rounded-full mb-8 ${config.tagClass}`}
+          >
+            {step.tag}
+          </span>
+
+          <div className="flex gap-2">
+            <button
+              onClick={goPrev}
+              disabled={activeStep === 0}
+              aria-label="Previous stage"
+              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-700 disabled:opacity-30 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            >
+              <ChevronLeftIcon />
+            </button>
+            <button
+              onClick={goNext}
+              disabled={activeStep === total - 1}
+              aria-label="Next stage"
+              className="w-9 h-9 rounded-full flex items-center justify-center border transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              style={{
+                borderColor: activeStep < total - 1 ? config.hex : "#e5e7eb",
+                color: activeStep < total - 1 ? config.hex : "#9ca3af",
+                "--tw-ring-color": config.hex,
+              } as React.CSSProperties}
+            >
+              <ChevronRightIcon />
+            </button>
+          </div>
+        </div>
+
+        {/* Device-chrome preview panel */}
+        <div className="relative">
           <div
-            className="absolute top-0 right-0 w-32 h-32 rounded-bl-[80px] opacity-20"
+            className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-[0.12] blur-3xl -z-10"
             style={{ backgroundColor: config.hex }}
           />
 
-          {/* Tag label */}
-          <div className="absolute top-6 left-6 flex items-center gap-2 z-10">
-            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: config.hex }} />
-            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-gray-500">
-              {step.tag}
-            </span>
-          </div>
+          <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.10)] bg-white">
 
-          {/* Image */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[340px] z-0">
-            {step.image?.url ? (
-              <img
-                src={resolveImageUrl(step.image.url)}
-                alt={step.image.alternativeText || step.title}
-                className="w-full h-full object-cover rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.10)]"
-              />
-            ) : (
-              <div className="w-full h-full bg-white/40 rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.10)]" />
-            )}
-          </div>
+            {/* Title bar */}
+            <div className="flex items-center gap-2 px-4 py-3" style={{ backgroundColor: "#12141c" }}>
+              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+              <span
+                className="ml-2 text-[11px] text-white/40 truncate"
+                style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+              >
+                monityio.io{route}
+              </span>
+            </div>
 
-          {/* Dot navigation */}
-          <div className="absolute bottom-6 right-6 flex flex-col gap-2">
-            {steps.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveStep(i)}
-                className="w-1.5 rounded-full transition-all duration-300"
-                style={{
-                  height: i === activeStep ? "24px" : "6px",
-                  backgroundColor: i === activeStep ? config.hex : "#d1d5db",
-                }}
-              />
-            ))}
+            {/* Image */}
+            <div className="relative w-full" style={{ height: 360 }}>
+              {step.image?.url ? (
+                <img
+                  src={resolveImageUrl(step.image.url)}
+                  alt={step.image.alternativeText || step.title}
+                  className="w-full h-full object-contain"
+                  style={{ backgroundColor: "#fcfaf6" }}
+                />
+              ) : (
+                <div className="w-full h-full" style={{ backgroundColor: `${config.hex}14` }} />
+              )}
+            </div>
+
+            {/* Status bar */}
+            <div className="h-[3px] w-full transition-colors duration-300" style={{ backgroundColor: config.hex }} />
           </div>
         </div>
 
-        {/* Step counter + prev/next */}
-        <div className="mt-5 flex items-center justify-between px-2">
-          <span className="text-[13px] text-gray-400 font-medium">
-            Step <strong className="text-[#0f1117]">{activeStep + 1}</strong> of {steps.length}
-          </span>
-          <div className="flex gap-2">
-            <button
-            onClick={() => setActiveStep((p) => Math.max(0, p - 1))}
-            disabled={activeStep === 0}
-            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-700 disabled:opacity-30 transition-all"
-            >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18l-6-6 6-6" />
-            </svg>
-            </button>
-            <button
-            onClick={() => setActiveStep((p) => Math.min(steps.length - 1, p + 1))}
-            disabled={activeStep === steps.length - 1}
-            className="w-8 h-8 rounded-full flex items-center justify-center border transition-all disabled:opacity-30"
-            style={{
-                borderColor: activeStep < steps.length - 1 ? config.hex : "#e5e7eb",
-                color: activeStep < steps.length - 1 ? config.hex : "#9ca3af",
-            }}
-            >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
-            </svg>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
