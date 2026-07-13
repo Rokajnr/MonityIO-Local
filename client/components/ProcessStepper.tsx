@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337";
 
@@ -49,8 +50,33 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
   const total = steps.length;
   const route = step.tag ? `/${step.tag.toLowerCase().replace(/\s+/g, "-")}` : `/stage-${step.num}`;
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+
   const goPrev = () => setActiveStep((p) => Math.max(0, p - 1));
   const goNext = () => setActiveStep((p) => Math.min(total - 1, p + 1));
+
+  useLayoutEffect(() => {
+    if (!contentRef.current || !previewRef.current) return;
+
+    const tl = gsap.timeline();
+    tl.fromTo(
+      [contentRef.current, previewRef.current],
+      { opacity: 0, y: 22, scale: 0.98 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: "power3.out",
+      }
+    );
+
+    return () => {
+      tl.kill();
+    };
+  }, [activeStep]);
 
   return (
     <div>
@@ -112,7 +138,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
         {/* Text */}
-        <div>
+        <div ref={contentRef}>
           <div className="flex items-center gap-3 mb-5">
             <span
               className="text-[11px] font-bold tracking-[0.14em] tabular-nums"
@@ -164,7 +190,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
         </div>
 
         {/* Device-chrome preview panel */}
-        <div className="relative">
+        <div ref={previewRef} className="relative">
           <div
             className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-[0.12] blur-3xl -z-10"
             style={{ backgroundColor: config.hex }}
