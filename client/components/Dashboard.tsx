@@ -96,15 +96,13 @@ export default async function Dashboard() {
             </div>
 
             <div>
-              <button
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all"
-                style={{ backgroundColor: "#D42B2B" }}
-              >
-                See It Live
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
+            <a
+              href="#contact"
+              className="inline-flex w-full items-center justify-center rounded-full bg-[#E8291C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(232,41,28,0.25)] transition hover:bg-[#c31d17] sm:w-auto"
+            >
+              See it live
+              <span className="ml-2 text-lg">→</span>
+            </a>
             </div>
           </div>
 
