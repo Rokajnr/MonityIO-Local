@@ -115,7 +115,7 @@ export default async function Hero() {
             {primaryCtaLink && primaryCtaText && (
               <Link
                 href={primaryCtaLink}
-                className="px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all"
+                className="inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(212,43,43,0.25)] transition hover:opacity-90 active:scale-[0.98] sm:w-auto"
                 style={{ backgroundColor: "#D42B2B" }}
               >
                 {primaryCtaText}
@@ -124,7 +124,7 @@ export default async function Hero() {
             {secondaryCtaLink && secondaryCtaText && (
               <Link
                 href={secondaryCtaLink}
-                className="px-6 py-3.5 rounded-xl border border-gray-200 text-[15px] font-semibold text-[#0f1117] hover:bg-gray-50 transition-colors"
+                className="inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-[#0f1117] border border-gray-200 hover:bg-gray-50 transition-colors sm:w-auto"
               >
                 {secondaryCtaText}
               </Link>
