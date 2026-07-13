@@ -71,6 +71,23 @@ export default async function Industries() {
             </div>
           ))}
         </div>
+
+        <div className="mt-8">
+          <div className="rounded-[2rem] bg-[#10121A] px-5 py-6 sm:px-7 sm:py-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-base sm:text-lg leading-7 max-w-xl">
+              <span className="text-zinc-400 font-normal">Don&apos;t see your sector?</span>
+              <span className="text-white font-semibold"> MonityIO adapts to any data environment.</span>
+            </p>
+
+            <a
+              href="#contact"
+              className="inline-flex w-full items-center justify-center rounded-full bg-[#E8291C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(232,41,28,0.25)] transition hover:bg-[#c31d17] sm:w-auto"
+            >
+              Talk to our team
+              <span className="ml-2 text-lg">→</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
