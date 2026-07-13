@@ -169,7 +169,14 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
               onClick={goPrev}
               disabled={activeStep === 0}
               aria-label="Previous stage"
-              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-700 disabled:opacity-30 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              style={{
+                backgroundColor: activeStep === 0 ? "#F9FAFB" : "#ffffff",
+                border: `1px solid ${activeStep === 0 ? "#E5E7EB" : config.hex}`,
+                color: activeStep === 0 ? "#9CA3AF" : config.hex,
+                boxShadow: activeStep === 0 ? "none" : `0 8px 16px ${config.hex}20`,
+                "--tw-ring-color": config.hex,
+              } as React.CSSProperties}
             >
               <ChevronLeftIcon />
             </button>
@@ -177,10 +184,12 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
               onClick={goNext}
               disabled={activeStep === total - 1}
               aria-label="Next stage"
-              className="w-9 h-9 rounded-full flex items-center justify-center border transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               style={{
-                borderColor: activeStep < total - 1 ? config.hex : "#e5e7eb",
-                color: activeStep < total - 1 ? config.hex : "#9ca3af",
+                backgroundColor: activeStep < total - 1 ? config.hex : "#F9FAFB",
+                border: `1px solid ${activeStep < total - 1 ? config.hex : "#E5E7EB"}`,
+                color: activeStep < total - 1 ? "#ffffff" : "#9CA3AF",
+                boxShadow: activeStep < total - 1 ? `0 8px 16px ${config.hex}40` : "none",
                 "--tw-ring-color": config.hex,
               } as React.CSSProperties}
             >
