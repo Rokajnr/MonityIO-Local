@@ -27,7 +27,6 @@ export default async function CaseStudies() {
               {title}{" "}
               {titleHighlight && (
                 <span
-                  className="italic"
                   style={{ color: "#D42B2B" }}
                 >
                   {titleHighlight}
