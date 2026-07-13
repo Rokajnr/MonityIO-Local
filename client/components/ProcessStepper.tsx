@@ -139,32 +139,36 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
 
         {/* Text */}
         <div ref={contentRef}>
-          <div className="flex items-center gap-3 mb-5">
-            <span
-              className="text-[11px] font-bold tracking-[0.14em] tabular-nums"
-              style={{ color: config.hex, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
-            >
-              STAGE {step.num} / {String(total).padStart(2, "0")}
-            </span>
-            <span className="h-px flex-1 bg-gray-200" />
-          </div>
-
-          <h3
-            className="font-[family-name:var(--font-serif)] text-[30px] md:text-[38px] font-extrabold leading-[1.15] tracking-tight text-[#0f1117] mb-4"
-            dangerouslySetInnerHTML={{ __html: step.title.replace(/\n/g, "<br />") }}
-          />
-
-          <p className="text-[15px] text-zinc-600 leading-relaxed max-w-[420px] mb-6">
-            {step.description}
-          </p>
-
-          <span
-            className={`inline-block text-[10px] font-bold tracking-[0.14em] uppercase px-3 py-1.5 rounded-full mb-8 ${config.tagClass}`}
+          <div
+            className="rounded-[2rem] bg-white border p-8 md:p-10 shadow-[0_18px_40px_rgba(15,17,23,0.06)]"
+            style={{ borderColor: `${config.hex}1A` }}
           >
-            {step.tag}
-          </span>
+            <div className="flex items-center gap-3 mb-5">
+              <span
+                className="text-[11px] font-bold tracking-[0.14em] tabular-nums"
+                style={{ color: config.hex, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+              >
+                STAGE {step.num} / {String(total).padStart(2, "0")}
+              </span>
+              <span className="h-px flex-1 bg-gray-200" />
+            </div>
 
-          <div className="flex gap-2">
+            <h3
+              className="font-[family-name:var(--font-serif)] text-[30px] md:text-[38px] font-extrabold leading-[1.15] tracking-tight text-[#0f1117] mb-4"
+              dangerouslySetInnerHTML={{ __html: step.title.replace(/\n/g, "<br />") }}
+            />
+
+            <p className="text-[15px] text-zinc-600 leading-relaxed max-w-[420px] mb-6">
+              {step.description}
+            </p>
+
+            <span
+              className={`inline-block text-[10px] font-bold tracking-[0.14em] uppercase px-3 py-1.5 rounded-full mb-8 ${config.tagClass}`}
+            >
+              {step.tag}
+            </span>
+
+            <div className="flex gap-2">
             <button
               onClick={goPrev}
               disabled={activeStep === 0}
@@ -197,6 +201,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
             </button>
           </div>
         </div>
+      </div>
 
         {/* Device-chrome preview panel */}
         <div ref={previewRef} className="relative">
