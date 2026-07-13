@@ -41,8 +41,42 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
 
   return (
     <div>
+      {/* Controls row */}
+      <div className="flex items-center justify-end gap-3 mb-6">
+        <button
+          onClick={prev}
+          disabled={current === 0}
+          className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          style={{
+            backgroundColor: current === 0 ? "#F9FAFB" : "#ffffff",
+            border: `1px solid ${current === 0 ? "#E5E7EB" : "#D42B2B"}`,
+            color: current === 0 ? "#9CA3AF" : "#D42B2B",
+            boxShadow: current === 0 ? "none" : "0 10px 30px rgba(212,43,43,0.15)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          disabled={current === maxIndex}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          style={{
+            backgroundColor: current === maxIndex ? "#F9FAFB" : "#D42B2B",
+            color: current === maxIndex ? "#9CA3AF" : "#ffffff",
+            border: current === maxIndex ? "1px solid #E5E7EB" : "1px solid transparent",
+            boxShadow: current === maxIndex ? "none" : "0 10px 30px rgba(212,43,43,0.25)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+
       {/* Cards row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {visible.map((card, i) => {
           const color = ACCENT[card.accentColor] ?? ACCENT.red;
           const imageUrl = resolveImageUrl(card.image?.url);
@@ -92,7 +126,8 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                     style={{ backgroundColor: color }}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 18l6-6-6-6" />
+                      <path d="M7 12h10" />
+                      <path d="M13 6l6 6-6 6" />
                     </svg>
                   </Link>
                 </div>
@@ -102,10 +137,8 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
         })}
       </div>
 
-      {/* Controls row */}
-      <div className="flex items-center justify-between">
-
-        {/* Dot indicators */}
+      {/* Dot indicators */}
+      <div className="flex justify-center mt-6">
         <div className="flex gap-2">
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
@@ -118,29 +151,6 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
               }}
             />
           ))}
-        </div>
-
-        {/* Prev / Next */}
-        <div className="flex gap-3">
-          <button
-            onClick={prev}
-            disabled={current === 0}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-[#0f1117] disabled:opacity-30 transition-all"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <button
-            onClick={next}
-            disabled={current === maxIndex}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30"
-            style={{ backgroundColor: "#D42B2B" }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
