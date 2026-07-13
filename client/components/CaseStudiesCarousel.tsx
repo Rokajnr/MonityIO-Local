@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { gsap, ScrollTrigger } from "@/lib/gasp";
 
 const ACCENT = {
   red:    "#D42B2B",
@@ -38,9 +39,69 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
   const next = () => setCurrent((p) => Math.min(maxIndex, p + 1));
 
   const visible = cards.slice(current, current + visibleCount);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!carouselRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".case-study-card",
+        { opacity: 0, y: 18, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: carouselRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      gsap.utils.toArray<HTMLDivElement>(".case-study-card").forEach((card) => {
+        const bar = card.querySelector<HTMLDivElement>(".hover-border");
+        if (!bar) return;
+
+        gsap.set(bar, { scaleX: 0, transformOrigin: "right center" });
+
+        const onEnter = () => {
+          gsap.to(bar, {
+            scaleX: 1,
+            duration: 0.4,
+            ease: "power3.out",
+            transformOrigin: "right center",
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(bar, {
+            scaleX: 0,
+            duration: 0.3,
+            ease: "power3.in",
+            transformOrigin: "left center",
+          });
+        };
+
+        card.addEventListener("mouseenter", onEnter);
+        card.addEventListener("mouseleave", onLeave);
+
+        return () => {
+          card.removeEventListener("mouseenter", onEnter);
+          card.removeEventListener("mouseleave", onLeave);
+        };
+      });
+    }, carouselRef);
+
+    return () => ctx.revert();
+  }, [current]);
 
   return (
-    <div>
+    <div ref={carouselRef}>
       {/* Controls row */}
       <div className="flex items-center justify-end gap-3 mb-6">
         <button
@@ -84,7 +145,7 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
           return (
             <div
               key={i}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col"
+              className="case-study-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col relative"
             >
               {/* Image */}
               <div className="h-[200px] bg-gray-100 relative overflow-hidden">
@@ -132,6 +193,10 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                   </Link>
                 </div>
               </div>
+              <div
+                className="hover-border absolute bottom-0 left-0 h-1 w-full origin-right"
+                style={{ backgroundColor: color }}
+              />
             </div>
           );
         })}
