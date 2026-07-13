@@ -19,9 +19,9 @@ export default async function Navbar() {
         <Image
           src="/logo.png"
           alt="MonityIO"
-          width={40}
-          height={32}
-          className="h-8 w-auto"
+          width={56}
+          height={44}
+          className="h-10 w-auto"
           priority
         />
 
