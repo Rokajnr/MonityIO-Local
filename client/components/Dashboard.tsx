@@ -131,10 +131,10 @@ export default async function Dashboard() {
             {/* Tall image */}
             <div className="relative rounded-3xl overflow-hidden w-full" style={{ height: "520px" }}>
               <Image
-                src="/bg-image-dashboard-sec-2.jpg"
+                src="/bg-image-dashboard-sec.jpg"
                 alt="MonityIO platform in use"
                 fill
-                className="object-cover"
+                className="object-contain"
               />
               {/* Vignette so card reads cleanly over the image */}
               <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/30 to-transparent pointer-events-none rounded-b-3xl" />
