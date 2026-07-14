@@ -15,6 +15,9 @@ export default async function Industries() {
   return (
     <section id="industries" className="border-t border-[#DDD9D0] bg-[#F7F6F2]">
       <div className="max-w-7xl mx-auto px-6 py-24">
+          <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-2">
+                Platform
+          </p>
         <div className="flex flex-col lg:flex-row lg:justify-between gap-10 mb-16">
           <h2
             className="
