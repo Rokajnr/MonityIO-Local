@@ -89,7 +89,7 @@ export default async function Dashboard() {
             )}
 
             <h2
-              className="font-[family-name:var(--font-serif)] text-[40px] md:text-[52px] font-extrabold leading-[1.05] tracking-tight text-[#0f1117] mb-6"
+              className="font-[family-name:var(--font-serif)] text-[32px] md:text-[42px] font-extrabold leading-[1.05] tracking-tight text-[#0f1117] mb-6"
               dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
             />
 

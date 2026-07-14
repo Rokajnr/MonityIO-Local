@@ -12,7 +12,7 @@ export default async function CaseStudies() {
   if (cards.length === 0) return null;
 
   return (
-    <section id="case-studies" className="py-20 md:py-28 bg-[#F7F5F2]">
+    <section id="case-studies" className="py-20 md:py-20 bg-[#F7F5F2]">
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
 
         {/* Header row — title left, nav right on desktop */}

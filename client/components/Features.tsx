@@ -15,7 +15,7 @@ export default async function Features() {
                 Features
         </p>
         {title && (
-          <h2 className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] pd-8 mb-16">
+          <h2 className="font-[family-name:var(--font-serif)] text-[32px] md:text-[42px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] pd-8 mb-16">
             {title}
           </h2>
         )}

@@ -21,7 +21,7 @@ export default async function Industries() {
         <div className="flex flex-col lg:flex-row lg:justify-between gap-10 mb-16">
           <h2
             className="
-              font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]
+              font-[family-name:var(--font-serif)] text-[32px] md:text-[42px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]
             "
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
@@ -75,9 +75,9 @@ export default async function Industries() {
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-10">
           <div className="rounded-[2rem] bg-[#10121A] px-5 py-6 sm:px-7 sm:py-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-base sm:text-lg leading-7 max-w-xl">
+            <p className="text-[15px] sm:text-lg leading-7 max-w-xl">
               <span className="text-zinc-400 font-normal">Don&apos;t see your sector?</span>
               <span className="text-white font-semibold"> MonityIO adapts to any data environment.</span>
             </p>

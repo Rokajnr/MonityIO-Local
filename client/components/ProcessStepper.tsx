@@ -81,7 +81,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
   return (
     <div>
       {/* ── Signal rail — the progress line literally fills as stages complete ── */}
-      <div className="relative flex items-center mb-16 md:mb-20 pb-8">
+      <div className="relative flex items-center mb-3 md:mb-20 pb-8">
         {steps.map((s, i) => {
           const c = COLOR_MAP[s.color] ?? COLOR_MAP.red;
           const isActive = i === activeStep;
@@ -154,7 +154,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
             </div>
 
             <h3
-              className="font-[family-name:var(--font-serif)] text-[30px] md:text-[38px] font-extrabold leading-[1.15] tracking-tight text-[#0f1117] mb-4"
+              className="font-[family-name:var(--font-serif)] text-[26px] md:text-[36px] font-extrabold leading-[1.15] tracking-tight text-[#0f1117] mb-4"
               dangerouslySetInnerHTML={{ __html: step.title.replace(/\n/g, "<br />") }}
             />
 
