@@ -31,14 +31,12 @@ function SalesChart() {
   );
 }
 
-// Hardcoded avatars — structural - Will come back to
 const AVATARS = [
   "https://i.pravatar.cc/32?img=1",
   "https://i.pravatar.cc/32?img=5",
   "https://i.pravatar.cc/32?img=8",
 ];
 
-// Hardcoded stats — structural
 const STATS = [
   { label: "Businesses served", value: "100+" },
   { label: "Data integrations", value: "128" },
@@ -47,14 +45,9 @@ const STATS = [
 
 function getStrapiMediaUrl(url?: string) {
   if (!url) return null;
-
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
-  }
-
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.replace(/\/$/, "");
   if (!baseUrl) return url;
-
   return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
@@ -76,41 +69,40 @@ export default async function Hero() {
   const heroImageUrl = getStrapiMediaUrl(image?.url);
 
   return (
-    <section className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-16 md:pt-14 md:pb-20">
+    <section className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-16 md:pt-32 md:pb-20">
+
       {/* Color Stripe */}
-        <div className="h-1 w-full flex mt-[15px] mb-16">
-          <div className="flex-1 bg-[#E8291C]" />
-          <div className="flex-1 bg-[#E07020]" />
-          <div className="flex-1 bg-[#F0B020]" />
-          <div className="flex-1 bg-[#2B6CB8]" />
-        </div>
-      <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+      <div className="h-1 w-full flex mt-[15px] mb-16">
+        <div className="flex-1 bg-[#E8291C]" />
+        <div className="flex-1 bg-[#E07020]" />
+        <div className="flex-1 bg-[#F0B020]" />
+        <div className="flex-1 bg-[#2B6CB8]" />
+      </div>
 
-        {/* ── LEFT COLUMN ── */}
-        <div className="flex-1 max-w-[560px] lg:order-last">
+      {/* flex-col-reverse: image first on mobile, text second.
+          lg:flex-row: text left, image right on desktop — no order overrides needed */}
+      <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-20">
 
+        {/* ── LEFT COLUMN — text, second in DOM = bottom on mobile, left on desktop ── */}
+        <div className="flex-1 max-w-[560px]">
 
-          {/* Eyebrow from Strapi */}
           {eyebrow && (
             <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-4">
               {eyebrow}
             </p>
           )}
 
-          {/* Title from Strapi */}
           <h1
             className="font-[family-name:var(--font-serif)] text-[42px] md:text-[54px] lg:text-[58px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] mb-5"
             dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
           />
 
-          {/* Description from Strapi */}
           {description && (
             <p className="text-[16px] md:text-[17px] text-gray-500 leading-relaxed max-w-[460px] mb-8">
               {description}
             </p>
           )}
 
-          {/* CTA buttons from Strapi */}
           <div className="flex flex-wrap gap-3 mb-12">
             {primaryCtaLink && primaryCtaText && (
               <Link
@@ -131,7 +123,6 @@ export default async function Hero() {
             )}
           </div>
 
-          {/* Stats row — structural, hardcoded */}
           <div className="flex flex-wrap gap-8">
             {STATS.map(({ label, value }) => (
               <div key={label}>
@@ -142,10 +133,9 @@ export default async function Hero() {
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN — fully structural ── */}
+        {/* ── RIGHT COLUMN — image, first in DOM = top on mobile, right on desktop ── */}
         <div className="flex-1 w-full max-w-[540px] relative">
 
-          {/* Hero image from Strapi */}
           {heroImageUrl ? (
             <img
               src={heroImageUrl}
@@ -184,7 +174,7 @@ export default async function Hero() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse ml-1" />
           </div>
 
-          {/* Background blobs — structural decoration */}
+          {/* Background blobs */}
           <div
             className="absolute -top-10 -right-10 w-56 h-56 rounded-full opacity-[0.08] blur-3xl -z-10"
             style={{ backgroundColor: "#2E72B8" }}
@@ -194,6 +184,7 @@ export default async function Hero() {
             style={{ backgroundColor: "#D42B2B" }}
           />
         </div>
+
       </div>
     </section>
   );
