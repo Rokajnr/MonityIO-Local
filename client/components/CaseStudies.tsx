@@ -23,7 +23,7 @@ export default async function CaseStudies() {
                 {eyebrow}
               </p>
             )}
-            <h2 className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]">
+            <h2 className="font-[family-name:var(--font-serif)] text-[32px] md:text-[42px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117]">
               {title}{" "}
               {titleHighlight && (
                 <span

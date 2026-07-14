@@ -80,7 +80,7 @@ export default async function Dashboard() {
         <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
 
           {/* ── LEFT: text — unchanged ── */}
-          <div className="flex-1 max-w-[460px] flex flex-col lg:pt-6">
+          <div className="flex-1 max-w-[460px] flex flex-col lg:pt-6 md:mb-5">
 
             {eyebrow && (
               <p className="text-[11px] font-bold tracking-[0.18em] uppercase mb-6" style={{ color: "#2E72B8" }}>
