@@ -11,6 +11,9 @@ export default async function Features() {
   return (
     <section id="features" className="border-t border-[#DDD9D0] bg-[#F7F6F2]">
       <div className="max-w-7xl mx-auto px-6 py-24">
+        <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-4">
+                Features
+        </p>
         {title && (
           <h2 className="font-[family-name:var(--font-serif)] text-[36px] md:text-[46px] font-extrabold leading-[1.1] tracking-tight text-[#0f1117] pd-8 mb-16">
             {title}
