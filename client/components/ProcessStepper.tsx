@@ -80,7 +80,7 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
 
   return (
     <div>
-      {/* ── Signal rail — the progress line literally fills as stages complete ── */}
+      {/* ── Signal rail with live pulse on active node ── */}
       <div className="relative flex items-center mb-3 md:mb-20 pb-8">
         {steps.map((s, i) => {
           const c = COLOR_MAP[s.color] ?? COLOR_MAP.red;
@@ -107,7 +107,14 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
                   } as React.CSSProperties
                 }
               >
-                {s.num}
+                {/* Live pulse ring — only on the active node, signals "this is live" */}
+                {isActive && (
+                  <span
+                    className="absolute inset-0 rounded-full animate-ping motion-reduce:hidden"
+                    style={{ backgroundColor: c.hex, opacity: 0.35 }}
+                  />
+                )}
+                <span className="relative">{s.num}</span>
                 <span
                   className={`absolute top-full mt-3 text-[10px] font-bold uppercase tracking-[0.12em] whitespace-nowrap hidden sm:block transition-opacity duration-300 ${
                     isActive ? "opacity-100" : "opacity-0"
@@ -134,14 +141,29 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
         })}
       </div>
 
-      {/* ── Content: active stage detail + device-chrome preview ── */}
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-        {/* Text */}
-        <div ref={contentRef}>
+        {/* Text — with ghosted watermark numeral behind card */}
+        <div ref={contentRef} className="relative">
+
+          {/* Ghosted large numeral watermark — structural, not from Strapi */}
+          <span
+            aria-hidden="true"
+            className="absolute -top-20 -left-0 md:-left-8 font-[family-name:var(--font-serif)] font-extrabold pointer-events-none select-none"
+            style={{
+              fontSize: "180px",
+              lineHeight: 1,
+              color: config.hex,
+              opacity: 0.06,
+              zIndex: 0,
+            }}
+          >
+            {step.num}
+          </span>
+
           <div
-            className="rounded-[2rem] bg-white border p-8 md:p-10 shadow-[0_18px_40px_rgba(15,17,23,0.06)]"
-            style={{ borderColor: `${config.hex}1A` }}
+            className="relative rounded-[2rem] bg-white border p-8 md:p-10 shadow-[0_18px_40px_rgba(15,17,23,0.06)]"
+            style={{ borderColor: `${config.hex}1A`, borderTopWidth: "3px", borderTopColor: config.hex, zIndex: 1 }}
           >
             <div className="flex items-center gap-3 mb-5">
               <span
@@ -169,41 +191,41 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
             </span>
 
             <div className="flex gap-2">
-            <button
-              onClick={goPrev}
-              disabled={activeStep === 0}
-              aria-label="Previous stage"
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{
-                backgroundColor: activeStep === 0 ? "#F9FAFB" : "#ffffff",
-                border: `1px solid ${activeStep === 0 ? "#E5E7EB" : config.hex}`,
-                color: activeStep === 0 ? "#9CA3AF" : config.hex,
-                boxShadow: activeStep === 0 ? "none" : `0 8px 16px ${config.hex}20`,
-                "--tw-ring-color": config.hex,
-              } as React.CSSProperties}
-            >
-              <ChevronLeftIcon />
-            </button>
-            <button
-              onClick={goNext}
-              disabled={activeStep === total - 1}
-              aria-label="Next stage"
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{
-                backgroundColor: activeStep < total - 1 ? config.hex : "#F9FAFB",
-                border: `1px solid ${activeStep < total - 1 ? config.hex : "#E5E7EB"}`,
-                color: activeStep < total - 1 ? "#ffffff" : "#9CA3AF",
-                boxShadow: activeStep < total - 1 ? `0 8px 16px ${config.hex}40` : "none",
-                "--tw-ring-color": config.hex,
-              } as React.CSSProperties}
-            >
-              <ChevronRightIcon />
-            </button>
+              <button
+                onClick={goPrev}
+                disabled={activeStep === 0}
+                aria-label="Previous stage"
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{
+                  backgroundColor: activeStep === 0 ? "#F9FAFB" : "#ffffff",
+                  border: `1px solid ${activeStep === 0 ? "#E5E7EB" : config.hex}`,
+                  color: activeStep === 0 ? "#9CA3AF" : config.hex,
+                  boxShadow: activeStep === 0 ? "none" : `0 8px 16px ${config.hex}20`,
+                  "--tw-ring-color": config.hex,
+                } as React.CSSProperties}
+              >
+                <ChevronLeftIcon />
+              </button>
+              <button
+                onClick={goNext}
+                disabled={activeStep === total - 1}
+                aria-label="Next stage"
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{
+                  backgroundColor: activeStep < total - 1 ? config.hex : "#F9FAFB",
+                  border: `1px solid ${activeStep < total - 1 ? config.hex : "#E5E7EB"}`,
+                  color: activeStep < total - 1 ? "#ffffff" : "#9CA3AF",
+                  boxShadow: activeStep < total - 1 ? `0 8px 16px ${config.hex}40` : "none",
+                  "--tw-ring-color": config.hex,
+                } as React.CSSProperties}
+              >
+                <ChevronRightIcon />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-        {/* Device-chrome preview panel */}
+        {/* Device-chrome preview — title bar now reflects step color */}
         <div ref={previewRef} className="relative">
           <div
             className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-[0.12] blur-3xl -z-10"
@@ -212,20 +234,23 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
 
           <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.10)] bg-white">
 
-            {/* Title bar */}
+            {/* Title bar — dark base, but the URL path pulses in the step color instead of staying grey */}
             <div className="flex items-center gap-2 px-4 py-3" style={{ backgroundColor: "#12141c" }}>
-              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-              <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: config.hex, opacity: 0.6 }} />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
               <span
-                className="ml-2 text-[11px] text-white/40 truncate"
+                className="ml-2 text-[11px] text-white/50 truncate flex items-center gap-1.5"
                 style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
               >
+                <span
+                  className="w-1.5 h-1.5 rounded-full animate-pulse motion-reduce:animate-none flex-shrink-0"
+                  style={{ backgroundColor: config.hex }}
+                />
                 monityio.io{route}
               </span>
             </div>
 
-            {/* Image */}
             <div className="relative w-full" style={{ height: 360 }}>
               {step.image?.url ? (
                 <img
@@ -239,7 +264,6 @@ export default function ProcessStepper({ steps }: { steps: Step[] }) {
               )}
             </div>
 
-            {/* Status bar */}
             <div className="h-[3px] w-full transition-colors duration-300" style={{ backgroundColor: config.hex }} />
           </div>
         </div>
