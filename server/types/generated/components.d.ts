@@ -1,5 +1,26 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface CaseStudyOutcome extends Struct.ComponentSchema {
+  collectionName: 'components_case_study_outcomes';
+  info: {
+    displayName: 'outcome';
+  };
+  attributes: {
+    text: Schema.Attribute.Text;
+  };
+}
+
+export interface CaseStudyStat extends Struct.ComponentSchema {
+  collectionName: 'components_case_study_stats';
+  info: {
+    displayName: 'stat';
+  };
+  attributes: {
+    label: Schema.Attribute.String;
+    value: Schema.Attribute.String;
+  };
+}
+
 export interface SectionsCaseStudyCard extends Struct.ComponentSchema {
   collectionName: 'components_sections_case_study_cards';
   info: {
@@ -327,6 +348,8 @@ export interface SharedSlider extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'case-study.outcome': CaseStudyOutcome;
+      'case-study.stat': CaseStudyStat;
       'sections.case-study-card': SectionsCaseStudyCard;
       'sections.chart-column': SectionsChartColumn;
       'sections.contact': SectionsContact;
