@@ -3,11 +3,12 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap, ScrollTrigger } from "@/lib/gasp";
+import { CaseStudy } from "@/api/case-studies";
 
-const ACCENT = {
-  red:    "#D42B2B",
+const ACCENT: Record<string, string> = {
+  red: "#D42B2B",
   orange: "#E07530",
-  blue:   "#2E72B8",
+  blue: "#2E72B8",
 };
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337";
@@ -18,20 +19,9 @@ function resolveImageUrl(url?: string) {
   return `${STRAPI_URL}${url}`;
 }
 
-type Card = {
-  slug?: string;
-  image?: { url: string; alternativeText?: string };
-  categories: string;
-  title: string;
-  ctaText: string;
-  ctaLink?: string;
-  accentColor: "red" | "orange" | "blue";
-};
-
-export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
+export default function CaseStudiesCarousel({ cards }: { cards: CaseStudy[] }) {
   const [current, setCurrent] = useState(0);
 
-  // Show 3 cards at a time on desktop, 1 on mobile
   const total = cards.length;
   const visibleCount = 3;
   const maxIndex = Math.max(0, total - visibleCount);
@@ -71,21 +61,10 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
         gsap.set(bar, { scaleX: 0, transformOrigin: "right center" });
 
         const onEnter = () => {
-          gsap.to(bar, {
-            scaleX: 1,
-            duration: 0.4,
-            ease: "power3.out",
-            transformOrigin: "right center",
-          });
+          gsap.to(bar, { scaleX: 1, duration: 0.4, ease: "power3.out", transformOrigin: "right center" });
         };
-
         const onLeave = () => {
-          gsap.to(bar, {
-            scaleX: 0,
-            duration: 0.3,
-            ease: "power3.in",
-            transformOrigin: "left center",
-          });
+          gsap.to(bar, { scaleX: 0, duration: 0.3, ease: "power3.in", transformOrigin: "left center" });
         };
 
         card.addEventListener("mouseenter", onEnter);
@@ -100,6 +79,8 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
 
     return () => ctx.revert();
   }, [current]);
+
+  if (total === 0) return null;
 
   return (
     <div ref={carouselRef}>
@@ -139,17 +120,16 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
 
       {/* Cards row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {visible.map((card, i) => {
+        {visible.map((card) => {
           const color = ACCENT[card.accentColor] ?? ACCENT.red;
           const imageUrl = resolveImageUrl(card.image?.url);
-          const href = card.slug ? `/case-studies/${card.slug}` : card.ctaLink || "#";
+          const href = `/case-studies/${card.slug}`;
 
           return (
             <div
-              key={card.slug ?? `${card.title}-${i}`}
+              key={card.slug}
               className="case-study-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col relative"
             >
-              {/* Image */}
               <div className="h-[200px] bg-gray-100 relative overflow-hidden">
                 {imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -163,11 +143,10 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                 )}
               </div>
 
-              {/* Content */}
               <div className="p-6 flex flex-col flex-1">
-                {card.categories && (
+                {card.tags?.length > 0 && (
                   <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-gray-400 mb-3">
-                    {card.categories}
+                    {card.tags.join(", ")}
                   </p>
                 )}
 
@@ -175,13 +154,9 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                   {card.title}
                 </h3>
 
-                {/* CTA row */}
                 <div className="flex items-center justify-between">
-                  <Link
-                    href={href}
-                    className="text-[13px] text-gray-400 hover:text-[#0f1117] transition-colors"
-                  >
-                    {card.ctaText || "Read case study"}
+                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#0f1117] transition-colors">
+                    Read case study
                   </Link>
                   <Link
                     href={href}
@@ -195,10 +170,7 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                   </Link>
                 </div>
               </div>
-              <div
-                className="hover-border absolute bottom-0 left-0 h-1 w-full origin-right"
-                style={{ backgroundColor: color }}
-              />
+              <div className="hover-border absolute bottom-0 left-0 h-1 w-full origin-right" style={{ backgroundColor: color }} />
             </div>
           );
         })}
