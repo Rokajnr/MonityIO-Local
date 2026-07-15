@@ -99,11 +99,12 @@ export interface SectorComponent {
 
 export interface CaseStudyCardComponent {
   id: number;
+  slug?: string;
   image?: { url: string; alternativeText?: string };
   categories: string;
   title: string;
   ctaText: string;
-  ctaLink: string;
+  ctaLink?: string;
   accentColor: "red" | "orange" | "blue";
 }
 
