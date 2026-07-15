@@ -1,60 +1,51 @@
 import Link from "next/link";
 import { getCaseStudies } from "@/api/case-studies";
-
-const ACCENT: Record<string, string> = { red: "#D42B2B", orange: "#E07530", blue: "#2E72B8" };
-
-function resolveImageUrl(url?: string) {
-  if (!url) return undefined;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  const base = process.env.NEXT_PUBLIC_STRAPI_API_URL?.replace(/\/$/, "");
-  return base ? `${base}${url}` : url;
-}
+import CaseStudiesIndex from "@/components/CaseStudiesIndex";
+import Navbar from "@/components/Navbar";
+import TickerBar from "@/components/TickerBar";
 
 export default async function CaseStudiesIndexPage() {
   const studies = await getCaseStudies();
 
   return (
     <div className="min-h-screen bg-[#F7F5F2]">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 py-20 md:py-28">
-        <h1 className="text-[36px] md:text-[46px] font-extrabold text-[#0f1117] mb-12">Case Studies</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {studies.map((c) => (
+      <Navbar />
+      <TickerBar />
+
+      <div className="pt-8 bg-[#F7F5F2]">
+        {/* Header */}
+        <div className="bg-white border-b border-[#DDD9D0]">
+          <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 pt-28 pb-14 md:pt-36 md:pb-16">
             <Link
-              href={`/case-studies/${c.slug}`}
-              key={c.slug}
-              className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.12)] transition-all duration-300 flex flex-col"
+              href="/"
+              className="inline-flex items-center gap-2 text-[13px] font-semibold text-gray-400 hover:text-[#0f1117] transition-colors mb-8"
             >
-              <div className="relative overflow-hidden h-[220px]">
-                {resolveImageUrl(c.image?.url) && (
-                  <img
-                    src={resolveImageUrl(c.image?.url)}
-                    alt={c.image?.alternativeText || c.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                )}
-              </div>
-              <div className="flex flex-col flex-1 p-6">
-                
-                <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-gray-400 mb-3">
-                {Array.isArray(c.tags) ? c.tags.join(", ") : ""}
-                </p>
-                {/* <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-gray-400 mb-3">{c.tags.join(", ")}</p> */}
-                <p className="text-[16px] font-bold text-[#0f1117] leading-snug flex-1 mb-5">{c.title}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-semibold text-gray-400">Read case study</span>
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-white"
-                    style={{ backgroundColor: ACCENT[c.accentColor] }}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 6l6 6-6 6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+              Back to home
             </Link>
-          ))}
+
+            <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-4">
+              Case Studies
+            </p>
+            <h1 className="font-[family-name:var(--font-serif)] text-[38px] md:text-[52px] font-extrabold leading-[1.08] tracking-tight text-[#0f1117] max-w-2xl mb-5">
+              Real results from real deployments
+            </h1>
+            <p className="text-[16px] text-gray-500 leading-relaxed max-w-xl">
+              See how organizations across compliance, logistics, and field operations use MonityIO to turn fragmented data into decisive action.
+            </p>
+
+            <div className="h-1 w-full flex mt-10">
+              <div className="flex-1 bg-[#D42B2B]" />
+              <div className="flex-1 bg-[#E07530]" />
+              <div className="flex-1 bg-[#F0B820]" />
+              <div className="flex-1 bg-[#2E72B8]" />
+            </div>
+          </div>
         </div>
+
+        <CaseStudiesIndex studies={studies} />
       </div>
     </div>
   );

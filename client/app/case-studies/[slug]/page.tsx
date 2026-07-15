@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getCaseStudies, getCaseStudyBySlug } from "@/api/case-studies";
+// import Navbar from "@/components/Navbar";
+// import TickerBar from "@/components/TickerBar";
 
 const ACCENT: Record<string, string> = {
   red: "#D42B2B",
@@ -45,7 +47,8 @@ export default async function CaseStudyPage({ params }: Props) {
   const imageUrl = resolveImageUrl(study.image?.url);
 
   return (
-    <div className="min-h-screen bg-white font-[Plus_Jakarta_Sans,sans-serif]">
+    <div className="min-h-screen bg-white font-[Plus_Jakarta_Sans,sans-serif] pt-0">
+
       {/* HERO */}
       <div className="relative h-[480px] md:h-[560px] overflow-hidden">
         {imageUrl && (
@@ -55,13 +58,13 @@ export default async function CaseStudyPage({ params }: Props) {
 
         <div className="absolute top-6 left-6 md:left-12 lg:left-20">
           <Link
-            href="/"
+            href="/case-studies"
             className="inline-flex items-center gap-2 text-[13px] font-semibold text-white/80 hover:text-white transition-colors bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
-            Back to home
+            Back to Case Studies
           </Link>
         </div>
 
