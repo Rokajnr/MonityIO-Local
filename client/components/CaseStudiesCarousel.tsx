@@ -19,11 +19,12 @@ function resolveImageUrl(url?: string) {
 }
 
 type Card = {
+  slug?: string;
   image?: { url: string; alternativeText?: string };
   categories: string;
   title: string;
   ctaText: string;
-  ctaLink: string;
+  ctaLink?: string;
   accentColor: "red" | "orange" | "blue";
 };
 
@@ -141,10 +142,11 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
         {visible.map((card, i) => {
           const color = ACCENT[card.accentColor] ?? ACCENT.red;
           const imageUrl = resolveImageUrl(card.image?.url);
+          const href = card.slug ? `/case-studies/${card.slug}` : card.ctaLink || "#";
 
           return (
             <div
-              key={i}
+              key={card.slug ?? `${card.title}-${i}`}
               className="case-study-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col relative"
             >
               {/* Image */}
@@ -176,13 +178,13 @@ export default function CaseStudiesCarousel({ cards }: { cards: Card[] }) {
                 {/* CTA row */}
                 <div className="flex items-center justify-between">
                   <Link
-                    href={card.ctaLink || "#"}
+                    href={href}
                     className="text-[13px] text-gray-400 hover:text-[#0f1117] transition-colors"
                   >
                     {card.ctaText || "Read case study"}
                   </Link>
                   <Link
-                    href={card.ctaLink || "#"}
+                    href={href}
                     className="w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0"
                     style={{ backgroundColor: color }}
                   >
