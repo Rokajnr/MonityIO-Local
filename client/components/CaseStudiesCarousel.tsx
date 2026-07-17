@@ -131,6 +131,7 @@ export default function CaseStudiesCarousel({ cards }: { cards: CaseStudy[] }) {
               className="case-study-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col relative"
             >
               <div className="h-[200px] bg-gray-100 relative overflow-hidden">
+                <Link href={href} className="block w-full h-full">
                 {imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -141,6 +142,7 @@ export default function CaseStudiesCarousel({ cards }: { cards: CaseStudy[] }) {
                 ) : (
                   <div className="w-full h-full bg-gray-200" />
                 )}
+                </Link>
               </div>
 
               <div className="p-6 flex flex-col flex-1">
@@ -151,11 +153,13 @@ export default function CaseStudiesCarousel({ cards }: { cards: CaseStudy[] }) {
                 )}
 
                 <h3 className="font-[family-name:var(--font-serif)] text-[17px] leading-snug text-[#0f1117] mb-6 flex-1">
-                  {card.title}
+                  <Link href={href} className="hover:text-[var(--accent)] transition-colors">
+                    {card.title}
+                  </Link>
                 </h3>
 
                 <div className="flex items-center justify-between">
-                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#0f1117] transition-colors">
+                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[var(--accent)] transition-colors">
                     Read case study
                   </Link>
                   <Link
